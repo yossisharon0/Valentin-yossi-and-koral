@@ -50,14 +50,14 @@ img{
     margin-top:20px;
     animation:pop 1s infinite alternate;
     box-shadow:0 0 20px pink;
-    display:block;
+    display:none; /* מוסתר בהתחלה */
 }
 
 @keyframes pop{0%{transform:scale(0);}100%{transform:scale(1);}}
 
 p{
     font-size:22px;
-    display:block;
+    display:none; /* מוסתר בהתחלה */
 }
 
 .heart{
@@ -108,12 +108,12 @@ canvas{
 <button onclick="yes()">כן 😍</button>
 <button id="no">לא 🙄</button>
 
-<img id="pic" src="image.JPG">
+<img id="pic" src="image.jpg"> <!-- מוסתר בהתחלה -->
 
 <p id="text">ידעתי שתגידי כן קורל ❤️  
 ביום האהבה אני רוצה להיות רק איתך 🥰</p>
 
-<p id="afterYes" style="display:none; font-size:22px; color:#ff4d6d; margin-top:10px;">
+<p id="afterYes" style="font-size:22px; color:#ff4d6d; margin-top:10px;">
 (שבוע אחרי כי אני במילואים)
 </p>
 
@@ -121,11 +121,18 @@ canvas{
 
 <script>
 const no=document.getElementById("no");
+const text=document.getElementById("text");
 const afterYes=document.getElementById("afterYes");
+const pic=document.getElementById("pic");
 const song=document.getElementById("song");
 const floatingText=document.getElementById("floatingText");
 
-// כפתור לא בורח
+// בהתחלה נסתר את הטקסטים והתמונה
+text.style.display="none";
+afterYes.style.display="none";
+pic.style.display="none";
+
+// כפתור "לא" בורח
 function move(){
     let x=Math.random()*(window.innerWidth-100);
     let y=Math.random()*(window.innerHeight-100);
@@ -135,16 +142,19 @@ function move(){
 no.addEventListener("mouseover",move);
 no.addEventListener("touchstart",move);
 
-// כפתור כן
+// כפתור "כן"
 function yes(){
     song.play();
     if(navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
     fireworks();
-    afterYes.style.display="block";
     explodeHearts();
+    // מציג את כל האלמנטים אחרי לחיצה
+    text.style.display="block";
+    afterYes.style.display="block";
+    pic.style.display="block";
 }
 
-// לבבות נופלים
+// לבבות נופלים כל הזמן
 setInterval(()=>{
     let h=document.createElement("div");
     h.className="heart";
