@@ -2,6 +2,7 @@
 <html lang="he">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>קורל 💖</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;600;900&display=swap" rel="stylesheet">
 
@@ -15,118 +16,244 @@ font-family:'Heebo',sans-serif;
 }
 
 body{
-height:100vh;
-overflow:hidden;
+min-height:100vh;
+overflow-x:hidden;
 background:black;
 color:white;
 display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
+position:relative;
 }
 
 canvas{
 position:fixed;
 top:0;
 left:0;
-z-index:-1;
+z-index:0;
+pointer-events:none;
+}
+
+/* משפטי אהבה ברקע */
+.loveQuote{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:clamp(20px, 4vw, 40px);
+color:rgba(255,255,255,0.15);
+text-align:center;
+font-weight:300;
+letter-spacing:2px;
+z-index:1;
+animation:fadeInOut 8s infinite;
+white-space:nowrap;
+max-width:90vw;
+}
+
+@keyframes fadeInOut{
+0%{opacity:0;}
+20%{opacity:1;}
+80%{opacity:1;}
+100%{opacity:0;}
 }
 
 #startScreen{
 position:fixed;
 width:100%;
 height:100%;
-background:black;
+background:linear-gradient(135deg,#000000,#1a0010);
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:30px;
+font-size:clamp(24px, 5vw, 36px);
 cursor:pointer;
-z-index:10;
+z-index:100;
 transition:1s;
+flex-direction:column;
+gap:20px;
+}
+
+#startScreen:hover{
+background:linear-gradient(135deg,#1a0010,#2d0020);
+}
+
+.startText{
+animation:pulse 2s infinite;
+text-shadow:0 0 30px rgba(255,46,99,0.8);
+}
+
+@keyframes pulse{
+0%, 100%{transform:scale(1);}
+50%{transform:scale(1.1);}
 }
 
 .card{
 backdrop-filter:blur(25px);
-background:rgba(255,255,255,0.08);
-padding:50px;
+background:rgba(255,255,255,0.12);
+padding:clamp(30px, 5vw, 60px);
 border-radius:30px;
 text-align:center;
-box-shadow:0 0 50px rgba(255,0,120,0.4);
+box-shadow:0 0 80px rgba(255,0,120,0.5), inset 0 0 20px rgba(255,255,255,0.1);
 display:none;
 animation:fadeIn 2s ease forwards;
+z-index:10;
+position:relative;
+max-width:90vw;
+width:600px;
+border:2px solid rgba(255,255,255,0.2);
 }
 
 @keyframes fadeIn{
-from{opacity:0; transform:scale(0.8);}
-to{opacity:1; transform:scale(1);}
+from{opacity:0; transform:scale(0.7) translateY(50px);}
+to{opacity:1; transform:scale(1) translateY(0);}
 }
 
 h1{
-font-size:34px;
-margin-bottom:20px;
+font-size:clamp(24px, 5vw, 38px);
+margin-bottom:25px;
+font-weight:900;
+text-shadow:0 0 20px rgba(255,46,99,0.6);
+line-height:1.4;
 }
 
 .countdown{
-font-size:18px;
-margin-bottom:25px;
-opacity:0.8;
+font-size:clamp(14px, 3vw, 18px);
+margin-bottom:30px;
+opacity:0.9;
+background:rgba(255,46,99,0.2);
+padding:15px;
+border-radius:15px;
+font-weight:600;
+}
+
+.buttonContainer{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:20px;
+margin:30px 0;
+flex-wrap:wrap;
+position:relative;
+min-height:80px;
 }
 
 button{
-padding:14px 40px;
-margin:15px;
-font-size:20px;
+padding:16px 45px;
+font-size:clamp(18px, 3vw, 22px);
 border:none;
 border-radius:50px;
 cursor:pointer;
-transition:0.3s;
+transition:all 0.3s ease;
+font-weight:600;
+position:relative;
 }
 
 #yes{
-background:#ff2e63;
+background:linear-gradient(135deg,#ff2e63,#ff6b9d);
 color:white;
-box-shadow:0 0 20px #ff2e63;
+box-shadow:0 8px 30px rgba(255,46,99,0.5);
 }
 
 #yes:hover{
-transform:scale(1.15);
-box-shadow:0 0 40px #ff2e63;
+transform:scale(1.1) translateY(-5px);
+box-shadow:0 12px 40px rgba(255,46,99,0.7);
+}
+
+#yes:active{
+transform:scale(1.05) translateY(-2px);
 }
 
 #no{
 background:white;
 color:#ff2e63;
-pointer-events:none; /* אי אפשר ללחוץ */
-opacity:0.5;
-cursor:not-allowed;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(255,255,255,0.3);
+position:absolute;
+transition:all 0.15s ease;
+}
+
+#no:hover{
+transform:scale(1.05);
 }
 
 .bigHeart{
-font-size:90px;
-margin-top:20px;
+font-size:clamp(60px, 12vw, 100px);
+margin-top:30px;
 display:none;
 animation:beat 1s infinite;
+filter:drop-shadow(0 0 20px #ff2e63);
 }
 
 @keyframes beat{
-0%{transform:scale(1);}
-50%{transform:scale(1.25);}
-100%{transform:scale(1);}
+0%, 100%{transform:scale(1);}
+50%{transform:scale(1.3);}
 }
 
 img{
-width:280px;
+width:clamp(200px, 60vw, 320px);
 border-radius:25px;
-margin-top:20px;
-box-shadow:0 0 30px pink;
+margin-top:30px;
+box-shadow:0 0 40px rgba(255,105,180,0.6);
 display:none;
+animation:slideIn 1s ease;
+border:3px solid rgba(255,255,255,0.3);
+}
+
+@keyframes slideIn{
+from{opacity:0; transform:translateY(30px);}
+to{opacity:1; transform:translateY(0);}
 }
 
 .message{
-margin-top:20px;
-font-size:22px;
+margin-top:30px;
+font-size:clamp(18px, 3vw, 24px);
 display:none;
+line-height:1.8;
+animation:fadeIn 2s ease;
+font-weight:600;
+background:rgba(255,46,99,0.15);
+padding:25px;
+border-radius:20px;
+}
+
+/* רספונסיבי */
+@media (max-width:600px){
+.card{
+padding:25px;
+width:95vw;
+}
+.buttonContainer{
+gap:15px;
+}
+button{
+padding:14px 35px;
+}
+}
+
+@media (max-height:700px){
+body{
+overflow-y:auto;
+padding:20px 0;
+}
+.card{
+margin:20px auto;
+}
+}
+
+/* פרטיקלים מיוחדים */
+.heart-particle{
+position:fixed;
+pointer-events:none;
+animation:float 3s ease-in-out infinite;
+z-index:5;
+opacity:0.6;
+}
+
+@keyframes float{
+0%, 100%{transform:translateY(0) rotate(0deg);}
+50%{transform:translateY(-30px) rotate(180deg);}
 }
 
 </style>
@@ -134,7 +261,12 @@ display:none;
 
 <body>
 
-<div id="startScreen">💖 לחצי כאן להתחיל 💖</div>
+<div id="startScreen">
+<div class="startText">💖 לחצי כאן להתחיל 💖</div>
+<div style="font-size:16px; opacity:0.7;">משהו מיוחד מחכה לך...</div>
+</div>
+
+<div class="loveQuote" id="loveQuote"></div>
 
 <canvas id="stars"></canvas>
 <canvas id="fireworks"></canvas>
@@ -145,12 +277,14 @@ display:none;
 
 <div class="countdown" id="countdown"></div>
 
+<div class="buttonContainer" id="btnContainer">
 <button id="yes">כן 😍</button>
 <button id="no">לא 🙄</button>
+</div>
 
 <div class="bigHeart" id="heart">💖</div>
 
-<img id="pic" src="image.JPG">
+<img id="pic" src="image.JPG" alt="תמונה מיוחדת">
 
 <div class="message" id="text">
 ידעתי שתגידי כן 😍<br>
@@ -164,6 +298,28 @@ display:none;
 
 <script>
 
+/* משפטי אהבה */
+const loveQuotes=[
+"את האור בחיים שלי 💫",
+"כל רגע איתך הוא קסם ✨",
+"את הופכת את החיים שלי למושלמים 💕",
+"אני מאושר שאת שלי 💖",
+"את החלום שהתגשם 🌟",
+"אהבתי אליך אינסופית 💗",
+"את הכל בשבילי ❤️",
+"יחד אנחנו בלתי מנוצחים 👑"
+];
+
+let quoteIndex=0;
+const loveQuote=document.getElementById("loveQuote");
+
+function changeQuote(){
+loveQuote.textContent=loveQuotes[quoteIndex];
+quoteIndex=(quoteIndex+1)%loveQuotes.length;
+}
+changeQuote();
+setInterval(changeQuote,8000);
+
 /* מסך פתיחה */
 const startScreen=document.getElementById("startScreen");
 const card=document.getElementById("mainCard");
@@ -173,21 +329,65 @@ startScreen.onclick=()=>{
 startScreen.style.opacity="0";
 setTimeout(()=>startScreen.style.display="none",1000);
 card.style.display="block";
+createHeartParticles();
 };
 
 /* ספירה לאחור */
 const countdown=document.getElementById("countdown");
 const target=new Date("Feb 14, 2026 00:00:00").getTime();
 
-setInterval(()=>{
+function updateCountdown(){
 let now=new Date().getTime();
 let diff=target-now;
 
 let days=Math.floor(diff/(1000*60*60*24));
 let hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+let minutes=Math.floor((diff%(1000*60*60))/(1000*60));
 
-countdown.innerHTML="עוד "+days+" ימים ו-"+hours+" שעות ליום האהבה שלנו 💘";
-},1000);
+countdown.innerHTML=`עוד ${days} ימים, ${hours} שעות ו-${minutes} דקות<br>ליום האהבה שלנו 💘`;
+}
+updateCountdown();
+setInterval(updateCountdown,1000);
+
+/* כפתור לא - בורח! */
+const noBtn=document.getElementById("no");
+const btnContainer=document.getElementById("btnContainer");
+
+let noClickCount=0;
+
+noBtn.addEventListener('mouseover',()=>{
+noClickCount++;
+const containerRect=btnContainer.getBoundingClientRect();
+const btnRect=noBtn.getBoundingClientRect();
+  
+// מחשב מיקום רנדומלי בתוך הקונטיינר
+const maxX=containerRect.width-btnRect.width-20;
+const maxY=100;
+  
+const randomX=Math.random()*maxX;
+const randomY=Math.random()*maxY;
+  
+noBtn.style.left=randomX+'px';
+noBtn.style.top=randomY+'px';
+
+// הודעות חמודות
+const messages=[
+"לא יכולה לסרב לי 😏",
+"בטוחה? 🥺",
+"נסי שוב... 😉",
+"את יודעת שהתשובה כן 💕",
+"עוד ניסיון? 😄"
+];
+
+if(noClickCount<=messages.length){
+noBtn.textContent=messages[noClickCount-1];
+}
+});
+
+noBtn.onclick=()=>{
+noBtn.textContent="אי אפשר ללחוץ! 😂";
+setTimeout(()=>noBtn.textContent="לא 🙄",1000);
+};
 
 /* כפתור כן */
 const yesBtn=document.getElementById("yes");
@@ -196,27 +396,68 @@ const pic=document.getElementById("pic");
 const text=document.getElementById("text");
 
 yesBtn.onclick=()=>{
-song.play();
+song.play().catch(e=>console.log("אודיו דורש אינטראקציה"));
 heart.style.display="block";
 pic.style.display="block";
 text.style.display="block";
-document.body.style.transition="1s";
+noBtn.style.display="none";
+yesBtn.textContent="אני אוהב אותך! 💖";
+yesBtn.style.background="linear-gradient(135deg,#ff0080,#ff8080)";
+document.body.style.transition="2s";
 document.body.style.background="linear-gradient(135deg,#ff4e8c,#ff9a9e)";
 launchFireworks();
+createManyHearts();
 };
 
-/* כוכבים תלת מימד */
+/* פרטיקלי לבבות */
+function createHeartParticles(){
+setInterval(()=>{
+const heart=document.createElement("div");
+heart.className="heart-particle";
+heart.textContent="💖";
+heart.style.left=Math.random()*100+"vw";
+heart.style.top=Math.random()*100+"vh";
+heart.style.fontSize=Math.random()*30+20+"px";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),3000);
+},3000);
+}
+
+function createManyHearts(){
+for(let i=0;i<20;i++){
+setTimeout(()=>{
+const heart=document.createElement("div");
+heart.textContent="💖";
+heart.style.position="fixed";
+heart.style.left=Math.random()*100+"vw";
+heart.style.top=Math.random()*100+"vh";
+heart.style.fontSize=Math.random()*40+30+"px";
+heart.style.animation="float 2s ease-out forwards";
+heart.style.zIndex="50";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),2000);
+},i*100);
+}
+}
+
+/* כוכבים */
 const starCanvas=document.getElementById("stars");
 const sctx=starCanvas.getContext("2d");
+
+function resizeCanvas(){
 starCanvas.width=window.innerWidth;
 starCanvas.height=window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
 
 let stars=[];
-for(let i=0;i<150;i++){
+for(let i=0;i<200;i++){
 stars.push({
 x:Math.random()*starCanvas.width,
 y:Math.random()*starCanvas.height,
-r:Math.random()*2
+r:Math.random()*2+0.5,
+speed:Math.random()*0.5+0.2
 });
 }
 
@@ -224,12 +465,17 @@ function animateStars(){
 sctx.clearRect(0,0,starCanvas.width,starCanvas.height);
 sctx.fillStyle="white";
 stars.forEach(s=>{
+sctx.globalAlpha=Math.random()*0.5+0.5;
 sctx.beginPath();
 sctx.arc(s.x,s.y,s.r,0,Math.PI*2);
 sctx.fill();
-s.y+=0.3;
-if(s.y>starCanvas.height) s.y=0;
+s.y+=s.speed;
+if(s.y>starCanvas.height){
+s.y=0;
+s.x=Math.random()*starCanvas.width;
+}
 });
+sctx.globalAlpha=1;
 requestAnimationFrame(animateStars);
 }
 animateStars();
@@ -240,16 +486,31 @@ const fctx=fireCanvas.getContext("2d");
 fireCanvas.width=window.innerWidth;
 fireCanvas.height=window.innerHeight;
 
+window.addEventListener('resize',()=>{
+fireCanvas.width=window.innerWidth;
+fireCanvas.height=window.innerHeight;
+});
+
 function launchFireworks(){
-for(let i=0;i<300;i++){
+for(let i=0;i<500;i++){
 setTimeout(()=>{
-fctx.fillStyle=`hsl(${Math.random()*360},100%,60%)`;
+const x=Math.random()*fireCanvas.width;
+const y=Math.random()*(fireCanvas.height/2);
+const color=`hsl(${Math.random()*360},100%,60%)`;
+  
+for(let j=0;j<30;j++){
+fctx.fillStyle=color;
 fctx.beginPath();
-fctx.arc(Math.random()*fireCanvas.width,Math.random()*fireCanvas.height/2,4,0,Math.PI*2);
+const angle=Math.random()*Math.PI*2;
+const distance=Math.random()*60;
+const px=x+Math.cos(angle)*distance;
+const py=y+Math.sin(angle)*distance;
+fctx.arc(px,py,3,0,Math.PI*2);
 fctx.fill();
-},i*8);
 }
-setTimeout(()=>fctx.clearRect(0,0,fireCanvas.width,fireCanvas.height),4000);
+},i*15);
+}
+setTimeout(()=>fctx.clearRect(0,0,fireCanvas.width,fireCanvas.height),8000);
 }
 
 </script>
