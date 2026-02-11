@@ -1,228 +1,860 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>קורל ❤️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>קורל 💖</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Heebo',sans-serif;}
+
+/* ===== RESET & GLOBAL ===== */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+:root{
+--color-primary:#ff2e63;
+--color-primary-dark:#d81e4f;
+--color-secondary:#ff6b9d;
+--color-accent:#ffafcc;
+--color-bg-start:#0a0015;
+--color-bg-end:#1a0520;
+--color-white:rgba(255,255,255,0.95);
+--color-glass:rgba(255,255,255,0.08);
+--transition-smooth:cubic-bezier(0.4, 0, 0.2, 1);
+--transition-bounce:cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
 body{
-    height:100vh;
-    overflow:hidden;
-    background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    color:white;
+font-family:'Heebo',sans-serif;
+min-height:100vh;
+overflow:hidden;
+background:linear-gradient(135deg, var(--color-bg-start), var(--color-bg-end));
+color:var(--color-white);
+position:relative;
+cursor:default;
 }
 
-/* Love quotes background */
-#loveBg{
-    position:absolute;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:40px;
-    opacity:0.06;
-    font-weight:800;
-    text-align:center;
-    pointer-events:none;
-    transition:1s;
+/* ===== CANVAS LAYERS ===== */
+#mainCanvas{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:1;
+pointer-events:none;
 }
 
-/* Scenes */
+/* ===== INTRO SCENE ===== */
 .scene{
-    position:absolute;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    opacity:0;
-    pointer-events:none;
-    transition:1.5s;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:10;
+opacity:0;
+pointer-events:none;
+transition:opacity 1.5s var(--transition-smooth);
 }
-.scene.active{opacity:1;pointer-events:auto;}
+
+.scene.active{
+opacity:1;
+pointer-events:auto;
+}
+
+#introScene{
+background:radial-gradient(circle at center, rgba(255,46,99,0.15), transparent 70%);
+}
+
+.intro-content{
+text-align:center;
+transform:scale(0.9);
+transition:transform 2s var(--transition-smooth);
+}
+
+#introScene.active .intro-content{
+transform:scale(1);
+}
+
+.intro-icon{
+font-size:clamp(60px, 12vw, 100px);
+margin-bottom:30px;
+animation:gentlePulse 3s ease-in-out infinite;
+filter:drop-shadow(0 0 30px var(--color-primary));
+}
+
+@keyframes gentlePulse{
+0%, 100%{transform:scale(1);}
+50%{transform:scale(1.08);}
+}
+
+.intro-text{
+font-size:clamp(18px, 3.5vw, 26px);
+font-weight:300;
+letter-spacing:3px;
+opacity:0.9;
+margin-bottom:40px;
+}
+
+.tap-hint{
+font-size:clamp(14px, 2.5vw, 18px);
+opacity:0.6;
+animation:fadeInOut 2s ease-in-out infinite;
+margin-top:20px;
+}
+
+@keyframes fadeInOut{
+0%, 100%{opacity:0.4;}
+50%{opacity:0.8;}
+}
+
+/* ===== MAIN SCENE ===== */
+#mainScene{
+padding:20px;
+}
 
 .card{
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(25px);
-    padding:60px 40px;
-    border-radius:30px;
-    border:1px solid rgba(255,255,255,0.2);
-    text-align:center;
-    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+backdrop-filter:blur(30px) saturate(180%);
+background:var(--color-glass);
+border:1px solid rgba(255,255,255,0.18);
+border-radius:30px;
+padding:clamp(30px, 6vw, 60px);
+max-width:600px;
+width:90%;
+box-shadow:
+0 8px 32px rgba(0,0,0,0.3),
+0 0 60px rgba(255,46,99,0.2),
+inset 0 0 40px rgba(255,255,255,0.05);
+text-align:center;
+transform:translateY(30px);
+opacity:0;
+transition:all 1.2s var(--transition-smooth);
 }
 
-h2{margin-bottom:20px;}
-.countdown{margin:20px 0;font-size:18px;opacity:0.8;}
-
-.buttons{position:relative;height:60px;}
-button{
-    padding:14px 40px;
-    border:none;
-    border-radius:40px;
-    font-size:18px;
-    cursor:pointer;
-    transition:0.3s;
-}
-#yes{
-    background:linear-gradient(135deg,#ff2e63,#ff6b9d);
-    color:white;
-    font-weight:600;
-}
-#yes:hover{transform:scale(1.08);}
-#no{
-    position:absolute;
-    background:rgba(255,255,255,0.15);
-    color:white;
-    border:1px solid rgba(255,255,255,0.4);
+#mainScene.active .card{
+transform:translateY(0);
+opacity:1;
 }
 
-/* Success */
-#success{
-    text-align:center;
-}
-#success h1{
-    font-size:60px;
-    margin-bottom:20px;
-}
-#success img{
-    width:280px;
-    border-radius:20px;
-    margin-top:30px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.7);
-    opacity:0;
-    transform:scale(1.2);
-    transition:2s;
-}
-#success.show img{
-    opacity:1;
-    transform:scale(1);
+.card-title{
+font-size:clamp(24px, 5vw, 36px);
+font-weight:800;
+line-height:1.5;
+margin-bottom:25px;
+background:linear-gradient(135deg, var(--color-white), var(--color-accent));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+text-shadow:0 2px 20px rgba(255,46,99,0.3);
 }
 
-/* Flash effect */
-#flash{
-    position:fixed;
-    inset:0;
-    background:white;
-    opacity:0;
-    pointer-events:none;
-    transition:0.4s;
+.countdown{
+font-size:clamp(14px, 2.8vw, 17px);
+font-weight:400;
+opacity:0.85;
+background:rgba(255,46,99,0.15);
+border:1px solid rgba(255,46,99,0.3);
+padding:18px 25px;
+border-radius:18px;
+margin-bottom:35px;
+line-height:1.6;
 }
-#flash.active{opacity:1;}
 
-.heart{
-    position:absolute;
-    bottom:-20px;
-    animation:rise 6s linear infinite;
+/* ===== BUTTONS ===== */
+.button-container{
+display:flex;
+flex-direction:column;
+gap:15px;
+margin:30px 0;
+align-items:center;
 }
-@keyframes rise{
-    from{transform:translateY(0);opacity:1;}
-    to{transform:translateY(-110vh);opacity:0;}
+
+.btn{
+position:relative;
+padding:16px 50px;
+font-size:clamp(18px, 3.5vw, 22px);
+font-weight:600;
+border:none;
+border-radius:50px;
+cursor:pointer;
+transition:all 0.3s var(--transition-smooth);
+font-family:'Heebo',sans-serif;
+letter-spacing:0.5px;
+outline:none;
+-webkit-tap-highlight-color:transparent;
 }
+
+#yesBtn{
+background:linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+color:white;
+box-shadow:
+0 8px 25px rgba(255,46,99,0.4),
+inset 0 1px 0 rgba(255,255,255,0.3);
+order:1;
+}
+
+#yesBtn:hover{
+transform:translateY(-4px) scale(1.03);
+box-shadow:
+0 12px 35px rgba(255,46,99,0.6),
+inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+#yesBtn:active{
+transform:translateY(-2px) scale(1.01);
+}
+
+#noBtn{
+background:rgba(255,255,255,0.12);
+color:var(--color-white);
+border:1px solid rgba(255,255,255,0.3);
+box-shadow:0 4px 15px rgba(0,0,0,0.2);
+opacity:0.7;
+order:2;
+cursor:not-allowed;
+}
+
+#noBtn:hover{
+opacity:0.5;
+transform:scale(0.98);
+}
+
+.btn-hint{
+font-size:clamp(12px, 2.2vw, 14px);
+opacity:0.5;
+margin-top:5px;
+font-weight:300;
+}
+
+/* ===== SUCCESS SCENE ===== */
+#successScene{
+background:linear-gradient(135deg, rgba(255,46,99,0.3), rgba(255,107,157,0.2));
+}
+
+.success-content{
+text-align:center;
+max-width:600px;
+padding:20px;
+}
+
+.success-heart{
+font-size:clamp(80px, 15vw, 120px);
+margin-bottom:30px;
+animation:heartBeat 1.2s ease-in-out infinite;
+filter:drop-shadow(0 0 40px var(--color-primary));
+}
+
+@keyframes heartBeat{
+0%, 100%{transform:scale(1);}
+25%{transform:scale(1.15);}
+50%{transform:scale(1.05);}
+75%{transform:scale(1.2);}
+}
+
+.success-message{
+font-size:clamp(20px, 4vw, 28px);
+font-weight:600;
+line-height:1.8;
+margin-bottom:35px;
+opacity:0;
+animation:fadeInUp 1s var(--transition-smooth) 0.5s forwards;
+}
+
+@keyframes fadeInUp{
+from{opacity:0; transform:translateY(20px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+.success-image{
+width:100%;
+max-width:350px;
+border-radius:25px;
+border:3px solid rgba(255,255,255,0.4);
+box-shadow:0 15px 50px rgba(0,0,0,0.4), 0 0 60px rgba(255,46,99,0.3);
+margin:0 auto;
+display:block;
+opacity:0;
+animation:fadeInUp 1s var(--transition-smooth) 1s forwards;
+}
+
+/* ===== LOVE QUOTES ===== */
+.love-quote{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%, -50%);
+font-size:clamp(22px, 4vw, 38px);
+font-weight:300;
+color:rgba(255,255,255,0.12);
+text-align:center;
+z-index:0;
+pointer-events:none;
+letter-spacing:2px;
+max-width:80vw;
+white-space:nowrap;
+opacity:0;
+transition:opacity 2s var(--transition-smooth);
+}
+
+.love-quote.visible{
+opacity:1;
+}
+
+/* ===== DIMMING OVERLAY ===== */
+.dim-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+z-index:9;
+opacity:0;
+pointer-events:none;
+transition:opacity 1s var(--transition-smooth);
+}
+
+.dim-overlay.active{
+opacity:1;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (min-width:768px){
+.button-container{
+flex-direction:row;
+justify-content:center;
+}
+#yesBtn{order:1;}
+#noBtn{order:2;}
+}
+
+@media (max-height:700px){
+.card{padding:25px;}
+.card-title{margin-bottom:15px;}
+.countdown{margin-bottom:20px; padding:12px 20px;}
+.button-container{margin:20px 0; gap:12px;}
+}
+
+@media (max-width:400px){
+.btn{padding:14px 40px;}
+}
+
+/* ===== UTILITY ===== */
+.hidden{
+display:none !important;
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="loveBg"></div>
-<div id="flash"></div>
+<!-- Canvas for particles, stars, fireworks -->
+<canvas id="mainCanvas"></canvas>
 
-<audio id="music" src="song.mp3"></audio>
+<!-- Background love quotes -->
+<div class="love-quote" id="loveQuote"></div>
 
-<div class="scene active" id="question">
-    <div class="card">
-        <h2>קורל חיים שלי ❤️<br>את פנויה ביום האהבה?</h2>
-        <div class="countdown" id="countdown"></div>
-        <div class="buttons">
-            <button id="yes">כן 😍</button>
-            <button id="no">לא 🙄</button>
-        </div>
-    </div>
+<!-- Dimming overlay for dramatic effect -->
+<div class="dim-overlay" id="dimOverlay"></div>
+
+<!-- SCENE 1: Intro -->
+<div class="scene active" id="introScene">
+<div class="intro-content">
+<div class="intro-icon">💖</div>
+<div class="intro-text">משהו מיוחד מחכה לך</div>
+<div class="tap-hint">לחצי להמשיך</div>
+</div>
 </div>
 
-<div class="scene" id="success">
-    <h1>ידעתי שתבחרי נכון 💕</h1>
-    <img src="image.JPG">
+<!-- SCENE 2: Main Question -->
+<div class="scene" id="mainScene">
+<div class="card">
+<h1 class="card-title">קורל חיים שלי 💕<br>את פנויה ביום האהבה?</h1>
+<div class="countdown" id="countdown"></div>
+<div class="button-container">
+<button class="btn" id="yesBtn">כן 😍</button>
+<button class="btn" id="noBtn">לא 🙄</button>
 </div>
+<div class="btn-hint">רמז: יש רק תשובה נכונה אחת 😉</div>
+</div>
+</div>
+
+<!-- SCENE 3: Success -->
+<div class="scene" id="successScene">
+<div class="success-content">
+<div class="success-heart">💖</div>
+<div class="success-message" id="successMessage"></div>
+<img class="success-image" id="successImage" src="image.JPG" alt="קורל ואני">
+</div>
+</div>
+
+<audio id="bgMusic" src="song.mp3" preload="auto"></audio>
 
 <script>
-const yes=document.getElementById("yes");
-const no=document.getElementById("no");
-const success=document.getElementById("success");
-const question=document.getElementById("question");
-const music=document.getElementById("music");
-const flash=document.getElementById("flash");
-const loveBg=document.getElementById("loveBg");
 
-/* Countdown to 14.02 */
-function updateCountdown(){
-    const now=new Date();
-    let year=now.getFullYear();
-    let target=new Date(year,1,14,0,0,0);
-    if(now>target) target=new Date(year+1,1,14,0,0,0);
-    const diff=target-now;
+// ============================================
+// CONFIGURATION & STATE
+// ============================================
 
-    const d=Math.floor(diff/(1000*60*60*24));
-    const h=Math.floor((diff/(1000*60*60))%24);
-    const m=Math.floor((diff/1000/60)%60);
-    const s=Math.floor((diff/1000)%60);
+const CONFIG = {
+targetDate: new Date("Feb 14, 2026 00:00:00").getTime(),
+loveQuotes: [
+"את האור בחיים שלי ✨",
+"כל רגע איתך הוא קסם 💫",
+"את הופכת את החיים שלי למושלמים 💕",
+"אני מאושר שאת שלי 💖",
+"את החלום שהתגשם 🌟",
+"אהבתי אליך אינסופית 💗",
+"את הכל בשבילי ❤️",
+"יחד אנחנו בלתי מנוצחים 👑"
+],
+successMessage: "ידעתי שתגידי כן 😍\nביום האהבה אני רוצה להיות רק איתך 🥰\n(שבוע אחרי כי אני במילואים 😉)",
+particleColors: ['#ff2e63', '#ff6b9d', '#ffafcc', '#ffc2d1'],
+isMobile: window.innerWidth < 768
+};
 
-    document.getElementById("countdown").innerHTML=
-        `עוד ${d} ימים ${h} שעות ${m} דקות ${s} שניות ❤️`;
+const STATE = {
+currentScene: 'intro',
+particleSystem: null,
+animationFrame: null,
+quoteIndex: 0,
+quoteInterval: null
+};
+
+// ============================================
+// DOM ELEMENTS
+// ============================================
+
+const elements = {
+canvas: document.getElementById('mainCanvas'),
+introScene: document.getElementById('introScene'),
+mainScene: document.getElementById('mainScene'),
+successScene: document.getElementById('successScene'),
+loveQuote: document.getElementById('loveQuote'),
+dimOverlay: document.getElementById('dimOverlay'),
+countdown: document.getElementById('countdown'),
+yesBtn: document.getElementById('yesBtn'),
+noBtn: document.getElementById('noBtn'),
+successMessage: document.getElementById('successMessage'),
+successImage: document.getElementById('successImage'),
+bgMusic: document.getElementById('bgMusic')
+};
+
+const ctx = elements.canvas.getContext('2d');
+
+// ============================================
+// PARTICLE SYSTEM
+// ============================================
+
+class Particle {
+constructor(x, y, type = 'star') {
+this.x = x;
+this.y = y;
+this.type = type;
+this.size = Math.random() * 2 + 1;
+this.speedY = Math.random() * 0.5 + 0.2;
+this.speedX = 0;
+this.alpha = Math.random() * 0.5 + 0.5;
+this.color = 'white';
+    
+if (type === 'firework') {
+const angle = Math.random() * Math.PI * 2;
+const speed = Math.random() * 4 + 2;
+this.speedX = Math.cos(angle) * speed;
+this.speedY = Math.sin(angle) * speed;
+this.gravity = 0.08;
+this.friction = 0.98;
+this.life = 1;
+this.decay = Math.random() * 0.015 + 0.01;
+this.size = Math.random() * 3 + 2;
+this.color = CONFIG.particleColors[Math.floor(Math.random() * CONFIG.particleColors.length)];
 }
-setInterval(updateCountdown,1000);
-updateCountdown();
-
-/* Moving NO */
-function moveNo(){
-    const maxX=window.innerWidth-no.offsetWidth;
-    const maxY=window.innerHeight-no.offsetHeight;
-    no.style.left=Math.random()*maxX+"px";
-    no.style.top=Math.random()*maxY+"px";
+    
+if (type === 'heart') {
+this.speedX = (Math.random() - 0.5) * 2;
+this.speedY = Math.random() * -2 - 1;
+this.gravity = 0.05;
+this.life = 1;
+this.decay = 0.008;
+this.size = Math.random() * 15 + 10;
+this.char = '💖';
 }
-no.addEventListener("mouseenter",moveNo);
-no.addEventListener("touchstart",moveNo);
+}
 
-/* Love quotes rotating */
-const quotes=[
-"את הסיפור אהבה הכי יפה שלי",
-"כל יום איתך הוא מתנה",
-"הלב שלי בחר בך",
-"את הבית שלי",
-"אני ואת זה לנצח"
-];
-let qi=0;
-setInterval(()=>{
-    loveBg.innerText=quotes[qi];
-    qi=(qi+1)%quotes.length;
-},3000);
+update() {
+if (this.type === 'star') {
+this.y += this.speedY;
+if (this.y > elements.canvas.height) {
+this.y = 0;
+this.x = Math.random() * elements.canvas.width;
+}
+this.alpha = Math.sin(Date.now() * 0.001 + this.x) * 0.3 + 0.6;
+}
+    
+if (this.type === 'firework') {
+this.speedY += this.gravity;
+this.speedX *= this.friction;
+this.speedY *= this.friction;
+this.x += this.speedX;
+this.y += this.speedY;
+this.life -= this.decay;
+}
+    
+if (this.type === 'heart') {
+this.speedY += this.gravity;
+this.x += this.speedX;
+this.y += this.speedY;
+this.life -= this.decay;
+}
+}
 
-/* YES click */
-yes.addEventListener("click",()=>{
-    if(navigator.vibrate) navigator.vibrate([200,100,200]);
-    flash.classList.add("active");
-    setTimeout(()=>flash.classList.remove("active"),400);
+draw(ctx) {
+if (this.life <= 0) return;
+    
+ctx.save();
+ctx.globalAlpha = this.type === 'star' ? this.alpha : this.life;
+    
+if (this.type === 'heart') {
+ctx.font = `${this.size}px Arial`;
+ctx.fillText(this.char, this.x, this.y);
+} else {
+ctx.fillStyle = this.color;
+ctx.beginPath();
+ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+ctx.fill();
+      
+if (this.type === 'firework') {
+ctx.shadowBlur = 10;
+ctx.shadowColor = this.color;
+}
+}
+    
+ctx.restore();
+}
 
-    music.play();
-    question.classList.remove("active");
-    success.classList.add("active");
-    success.classList.add("show");
+isDead() {
+return this.life <= 0;
+}
+}
 
-    setInterval(()=>{
-        const heart=document.createElement("div");
-        heart.className="heart";
-        heart.innerHTML="💖";
-        heart.style.left=Math.random()*100+"vw";
-        heart.style.fontSize=(20+Math.random()*20)+"px";
-        document.body.appendChild(heart);
-        setTimeout(()=>heart.remove(),6000);
-    },500);
+class ParticleSystem {
+constructor() {
+this.particles = [];
+this.init();
+}
+
+init() {
+// Create initial stars
+for (let i = 0; i < (CONFIG.isMobile ? 80 : 150); i++) {
+this.particles.push(new Particle(
+Math.random() * elements.canvas.width,
+Math.random() * elements.canvas.height,
+'star'
+));
+}
+}
+
+addFirework(x, y) {
+const count = CONFIG.isMobile ? 25 : 40;
+for (let i = 0; i < count; i++) {
+this.particles.push(new Particle(x, y, 'firework'));
+}
+}
+
+addHeart(x, y) {
+this.particles.push(new Particle(x, y, 'heart'));
+}
+
+update() {
+this.particles.forEach(p => p.update());
+this.particles = this.particles.filter(p => !p.isDead() || p.type === 'star');
+}
+
+draw() {
+this.particles.forEach(p => p.draw(ctx));
+}
+}
+
+// ============================================
+// CANVAS MANAGEMENT
+// ============================================
+
+function resizeCanvas() {
+elements.canvas.width = window.innerWidth;
+elements.canvas.height = window.innerHeight;
+}
+
+function animate() {
+ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
+  
+if (STATE.particleSystem) {
+STATE.particleSystem.update();
+STATE.particleSystem.draw();
+}
+  
+STATE.animationFrame = requestAnimationFrame(animate);
+}
+
+// ============================================
+// LOVE QUOTES MANAGER
+// ============================================
+
+function updateLoveQuote() {
+elements.loveQuote.classList.remove('visible');
+  
+setTimeout(() => {
+elements.loveQuote.textContent = CONFIG.loveQuotes[STATE.quoteIndex];
+elements.loveQuote.classList.add('visible');
+STATE.quoteIndex = (STATE.quoteIndex + 1) % CONFIG.loveQuotes.length;
+}, 2000);
+}
+
+function startLoveQuotes() {
+updateLoveQuote();
+STATE.quoteInterval = setInterval(updateLoveQuote, 8000);
+}
+
+function stopLoveQuotes() {
+if (STATE.quoteInterval) {
+clearInterval(STATE.quoteInterval);
+STATE.quoteInterval = null;
+}
+elements.loveQuote.classList.remove('visible');
+}
+
+// ============================================
+// COUNTDOWN TIMER
+// ============================================
+
+function updateCountdown() {
+const now = new Date().getTime();
+const diff = CONFIG.targetDate - now;
+  
+const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  
+elements.countdown.innerHTML = `עוד ${days} ימים, ${hours} שעות ו-${minutes} דקות<br>ליום האהבה שלנו 💘`;
+}
+
+// ============================================
+// TYPEWRITER EFFECT
+// ============================================
+
+function typeWriter(element, text, speed = 50) {
+return new Promise((resolve) => {
+let index = 0;
+element.textContent = '';
+    
+function type() {
+if (index < text.length) {
+element.textContent += text.charAt(index);
+index++;
+setTimeout(type, speed);
+} else {
+resolve();
+}
+}
+    
+type();
 });
+}
+
+// ============================================
+// SCENE TRANSITIONS
+// ============================================
+
+function switchScene(from, to, callback) {
+const fromElement = elements[from + 'Scene'];
+const toElement = elements[to + 'Scene'];
+  
+// Fade out current scene
+fromElement.classList.remove('active');
+  
+setTimeout(() => {
+fromElement.classList.add('hidden');
+toElement.classList.remove('hidden');
+    
+// Small delay before fading in
+setTimeout(() => {
+toElement.classList.add('active');
+STATE.currentScene = to;
+if (callback) callback();
+}, 100);
+}, 1500);
+}
+
+// ============================================
+// FIREWORKS SHOW
+// ============================================
+
+function launchFireworksShow() {
+const launchCount = CONFIG.isMobile ? 15 : 30;
+let launched = 0;
+  
+const interval = setInterval(() => {
+if (launched >= launchCount) {
+clearInterval(interval);
+return;
+}
+    
+const x = Math.random() * elements.canvas.width;
+const y = Math.random() * (elements.canvas.height * 0.6);
+    
+STATE.particleSystem.addFirework(x, y);
+launched++;
+}, 200);
+}
+
+// ============================================
+// HEART PARTICLE SHOWER
+// ============================================
+
+function createHeartShower() {
+let count = 0;
+const maxCount = CONFIG.isMobile ? 15 : 25;
+  
+const interval = setInterval(() => {
+if (count >= maxCount) {
+clearInterval(interval);
+return;
+}
+    
+const x = Math.random() * elements.canvas.width;
+const y = elements.canvas.height + 50;
+    
+STATE.particleSystem.addHeart(x, y);
+count++;
+}, 150);
+}
+
+// ============================================
+// EVENT HANDLERS
+// ============================================
+
+function handleIntroClick() {
+// Dim the background slightly
+elements.dimOverlay.classList.add('active');
+  
+setTimeout(() => {
+elements.dimOverlay.classList.remove('active');
+switchScene('intro', 'main', () => {
+updateCountdown();
+setInterval(updateCountdown, 60000); // Update every minute
+});
+}, 1000);
+}
+
+function handleYesClick() {
+// Play music
+elements.bgMusic.play().catch(e => console.log('Audio requires user interaction'));
+  
+// Disable button
+elements.yesBtn.disabled = true;
+elements.yesBtn.textContent = 'אני אוהב אותך! 💖';
+elements.yesBtn.style.background = 'linear-gradient(135deg, #ff0080, #ff6b9d)';
+  
+// Hide "no" button
+elements.noBtn.style.opacity = '0';
+setTimeout(() => elements.noBtn.style.display = 'none', 300);
+  
+// Stop love quotes
+stopLoveQuotes();
+  
+// Launch fireworks
+launchFireworksShow();
+  
+// Dramatic dim
+elements.dimOverlay.classList.add('active');
+  
+// Transition to success scene
+setTimeout(() => {
+elements.dimOverlay.classList.remove('active');
+switchScene('main', 'success', async () => {
+// Change background gradient
+document.body.style.transition = 'background 2s ease';
+document.body.style.background = 'linear-gradient(135deg, #ff4e8c, #ff9a9e)';
+      
+// Typewriter effect for message
+await typeWriter(elements.successMessage, CONFIG.successMessage, 40);
+      
+// Show image
+setTimeout(() => {
+elements.successImage.style.opacity = '1';
+}, 500);
+      
+// Create heart shower
+createHeartShower();
+      
+// More fireworks
+setTimeout(launchFireworksShow, 2000);
+});
+}, 2000);
+}
+
+function handleNoHover() {
+// Subtle hint that it's not clickable
+elements.noBtn.style.transform = 'scale(0.95)';
+setTimeout(() => {
+elements.noBtn.style.transform = 'scale(1)';
+}, 200);
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+function init() {
+// Setup canvas
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+  
+// Create particle system
+STATE.particleSystem = new ParticleSystem();
+  
+// Start animation loop
+animate();
+  
+// Start love quotes
+startLoveQuotes();
+  
+// Event listeners
+elements.introScene.addEventListener('click', handleIntroClick);
+elements.yesBtn.addEventListener('click', handleYesClick);
+elements.noBtn.addEventListener('mouseenter', handleNoHover);
+elements.noBtn.addEventListener('click', (e) => e.preventDefault());
+  
+// Prevent context menu on long press (mobile)
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+}
+
+// Start when DOM is ready
+if (document.readyState === 'loading') {
+document.addEventListener('DOMContentLoaded', init);
+} else {
+init();
+}
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+if (STATE.animationFrame) {
+cancelAnimationFrame(STATE.animationFrame);
+}
+if (STATE.quoteInterval) {
+clearInterval(STATE.quoteInterval);
+}
+});
+
 </script>
 
 </body>
