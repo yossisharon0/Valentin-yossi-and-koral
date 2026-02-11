@@ -5,42 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>קורל 💖</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
-
 <style>
 /* ==================== RESET & VARIABLES ==================== */
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
---primary:#ff2e63;--primary-dark:#d81e4f;--secondary:#ff6b9d;--accent:#ffafcc;
---bg-night-start:#0a0015;--bg-night-end:#1a0520;--bg-day-start:#1a0520;--bg-day-end:#2d1b3d;
---white:rgba(255,255,255,0.95);--glass:rgba(255,255,255,0.08);
---transition:cubic-bezier(0.4, 0, 0.2, 1);--bounce:cubic-bezier(0.68, -0.55, 0.265, 1.55);
+--primary:#ff2e63;
+--primary-dark:#d81e4f;
+--secondary:#ff6b9d;
+--accent:#ffafcc;
+--bg-night-start:#0a0015;
+--bg-night-end:#1a0520;
+--bg-day-start:#1a0520;
+--bg-day-end:#2d1b3d;
+--white:rgba(255,255,255,0.95);
+--glass:rgba(255,255,255,0.08);
+--transition:cubic-bezier(0.4, 0, 0.2, 1);
+--bounce:cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
-body{
-font-family:'Heebo',sans-serif;
-min-height:100vh;
-overflow:hidden;
-background:linear-gradient(135deg, var(--bg-night-start), var(--bg-night-end));
-color:var(--white);
-position:relative;
-transition:background 3s ease;
-}
-
-/* ==================== CANVAS ==================== */
+body{font-family:'Heebo',sans-serif;min-height:100vh;overflow:hidden;background:linear-gradient(135deg, var(--bg-night-start), var(--bg-night-end));color:var(--white);position:relative;transition:background 3s ease;}
 #mainCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;}
-
-/* ==================== FILM GRAIN OVERLAY ==================== */
 .grain-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noise)" opacity="0.05"/%3E%3C/svg%3E');opacity:0;pointer-events:none;z-index:100;transition:opacity 2s ease;}
 .grain-overlay.active{opacity:1;}
-
-/* ==================== VIGNETTE ==================== */
 .vignette{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.7) 100%);opacity:0;pointer-events:none;z-index:99;transition:opacity 2s ease;}
 .vignette.active{opacity:1;}
-
-/* ==================== SCENES ==================== */
 .scene{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:10;opacity:0;pointer-events:none;transition:opacity 1.5s var(--transition);}
 .scene.active{opacity:1;pointer-events:auto;}
-
-/* ==================== INTRO SCENE ==================== */
 #introScene{background:radial-gradient(circle at center, rgba(255,46,99,0.15), transparent 70%);}
 .intro-content{text-align:center;transform:scale(0.9);transition:transform 2.5s var(--transition);}
 #introScene.active .intro-content{transform:scale(1);}
@@ -49,8 +38,6 @@ transition:background 3s ease;
 .intro-text{font-size:clamp(20px, 4vw, 28px);font-weight:300;letter-spacing:4px;opacity:0.9;margin-bottom:50px;}
 .tap-hint{font-size:clamp(15px, 2.8vw, 19px);opacity:0.6;animation:fadeInOut 2.5s ease-in-out infinite;margin-top:25px;font-weight:300;}
 @keyframes fadeInOut{0%, 100%{opacity:0.35;}50%{opacity:0.85;}}
-
-/* ==================== MAIN SCENE ==================== */
 #mainScene{padding:20px;}
 .card{backdrop-filter:blur(35px) saturate(180%);background:var(--glass);border:1px solid rgba(255,255,255,0.2);border-radius:35px;padding:clamp(35px, 7vw, 70px);max-width:650px;width:92%;box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 80px rgba(255,46,99,0.25),inset 0 0 50px rgba(255,255,255,0.06);text-align:center;transform:translateY(40px);opacity:0;transition:all 1.5s var(--transition);position:relative;}
 #mainScene.active .card{transform:translateY(0);opacity:1;}
@@ -69,12 +56,8 @@ transition:background 3s ease;
 #noBtn.escaping{opacity:0.6;}
 #noBtn.defeated{transform:scale(0.85);opacity:0.4;filter:blur(1px);pointer-events:none;}
 .btn-hint{font-size:clamp(13px, 2.4vw, 15px);opacity:0.52;margin-top:8px;font-weight:300;}
-
-/* ==================== DIM OVERLAY ==================== */
 .dim-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9;opacity:0;pointer-events:none;transition:opacity 1.2s var(--transition);}
 .dim-overlay.active{opacity:1;}
-
-/* ==================== SUCCESS SCENE ==================== */
 #successScene{background:transparent;}
 .success-content{text-align:center;max-width:700px;padding:25px;position:relative;}
 .success-name{font-family:'Crimson Text', serif;font-size:clamp(50px, 12vw, 90px);font-weight:600;margin-bottom:40px;opacity:0;transform:scale(0.85);transition:all 2s var(--transition);background:linear-gradient(135deg, #fff, #ffafcc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 50px rgba(255,46,99,0.7));letter-spacing:3px;}
@@ -86,25 +69,20 @@ transition:background 3s ease;
 .image-frame{position:relative;padding:15px;background:rgba(255,255,255,0.1);backdrop-filter:blur(25px);border-radius:30px;border:2px solid rgba(255,255,255,0.25);box-shadow:0 25px 80px rgba(0,0,0,0.6),0 0 100px rgba(255,46,99,0.4),inset 0 0 60px rgba(255,255,255,0.08);}
 .success-image{width:100%;max-width:400px;border-radius:20px;display:block;box-shadow:0 15px 50px rgba(0,0,0,0.5);}
 .image-reflection{position:absolute;bottom:-50px;left:50%;transform:translateX(-50%) scaleY(-1);width:90%;height:50px;background:linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);filter:blur(10px);opacity:0.4;border-radius:20px;pointer-events:none;}
-
-/* ==================== LOVE QUOTES BACKGROUND ==================== */
 .love-quote{position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);font-size:clamp(24px, 4.5vw, 42px);font-weight:300;color:rgba(255,255,255,0.12);text-align:center;z-index:0;pointer-events:none;letter-spacing:3px;max-width:85vw;white-space:nowrap;opacity:0;transition:opacity 2.5s var(--transition);}
 .love-quote.visible{opacity:1;}
-
-/* ==================== RESPONSIVE ==================== */
 @media (min-width:768px){.button-container{flex-direction:row;justify-content:center;}}
 @media (max-height:750px){.card{padding:30px;}.card-title{margin-bottom:20px;}.countdown{margin-bottom:25px; padding:15px 22px;}.button-container{margin:25px 0; gap:15px; min-height:100px;}}
 @media (max-width:400px){.btn{padding:16px 45px;}}
+.hidden{display:none !important;}
 </style>
 </head>
 <body>
-
 <canvas id="mainCanvas"></canvas>
 <div class="grain-overlay" id="grainOverlay"></div>
 <div class="vignette" id="vignetteOverlay"></div>
 <div class="love-quote" id="loveQuote"></div>
 <div class="dim-overlay" id="dimOverlay"></div>
-
 <div class="scene active" id="introScene">
   <div class="intro-content">
     <div class="intro-icon">💖</div>
@@ -112,7 +90,6 @@ transition:background 3s ease;
     <div class="tap-hint">לחצי להמשיך</div>
   </div>
 </div>
-
 <div class="scene" id="mainScene">
   <div class="card">
     <h1 class="card-title">קורל חיים שלי 💕<br>את פנויה ביום האהבה?</h1>
@@ -124,7 +101,6 @@ transition:background 3s ease;
     <div class="btn-hint">רמז: יש רק תשובה נכונה אחת 😉</div>
   </div>
 </div>
-
 <div class="scene" id="successScene">
   <div class="success-content">
     <div class="success-name" id="successName">קורל</div>
@@ -137,16 +113,14 @@ transition:background 3s ease;
     </div>
   </div>
 </div>
-
 <audio id="bgMusic" src="song.mp3" preload="auto"></audio>
-
 <script>
 // ============================================
-// כאן ייכנס כל הקוד JS שלך כפי שהזנת
-// כולל CONFIG, STATE, DOM, Particle, ParticleSystem, פונקציות, ו-init()
-// =================================================================================
-// אין צורך לייבא שום JS חיצוני
+// כל הקוד JS שלך פה (הקוד הארוך שנתת), מותאם ל-inline
+// ניתן פשוט להעתיק את כל ה-JS מהקובץ הקודם ולהדביק כאן
+// ============================================
+// לדוגמה, ההגדרות, ParticleSystem, פונקציות, event listeners וכו'
+// הקוד הזה יפעל ישירות בתוך ה-HTML ללא קבצים נוספים
 </script>
-
 </body>
 </html>
