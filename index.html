@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>קורל 💖</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;600;900&display=swap" rel="stylesheet">
 
 <style>
@@ -18,30 +17,44 @@ font-family:'Heebo',sans-serif;
 body{
 height:100vh;
 overflow:hidden;
-background:linear-gradient(-45deg,#ff6f91,#ff9a9e,#fad0c4,#ffdde1);
-background-size:400% 400%;
-animation:gradientMove 15s ease infinite;
+background:black;
+color:white;
 display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-color:white;
 }
 
-@keyframes gradientMove{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+#startScreen{
+position:fixed;
+width:100%;
+height:100%;
+background:black;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:30px;
+cursor:pointer;
+z-index:10;
+transition:1s;
 }
 
 .card{
-backdrop-filter:blur(20px);
-background:rgba(255,255,255,0.1);
-padding:40px;
-border-radius:25px;
+backdrop-filter:blur(25px);
+background:rgba(255,255,255,0.08);
+padding:50px;
+border-radius:30px;
 text-align:center;
-box-shadow:0 0 40px rgba(255,0,100,0.4);
-animation:fadeIn 2s ease;
+box-shadow:0 0 50px rgba(255,0,120,0.4);
+display:none;
+animation:fadeIn 2s ease forwards;
 }
 
 @keyframes fadeIn{
@@ -50,13 +63,18 @@ to{opacity:1; transform:scale(1);}
 }
 
 h1{
-font-size:32px;
+font-size:34px;
 margin-bottom:20px;
-text-shadow:0 0 15px rgba(255,255,255,0.8);
+}
+
+.countdown{
+font-size:18px;
+margin-bottom:25px;
+opacity:0.8;
 }
 
 button{
-padding:12px 35px;
+padding:14px 40px;
 margin:15px;
 font-size:20px;
 border:none;
@@ -79,47 +97,36 @@ box-shadow:0 0 40px #ff2e63;
 #no{
 background:white;
 color:#ff2e63;
-position:absolute;
+pointer-events:none; /* אי אפשר ללחוץ */
+opacity:0.5;
+cursor:not-allowed;
+}
+
+.bigHeart{
+font-size:90px;
+margin-top:20px;
+display:none;
+animation:beat 1s infinite;
+}
+
+@keyframes beat{
+0%{transform:scale(1);}
+50%{transform:scale(1.25);}
+100%{transform:scale(1);}
 }
 
 img{
 width:280px;
-border-radius:20px;
+border-radius:25px;
 margin-top:20px;
-box-shadow:0 0 30px rgba(255,255,255,0.7);
+box-shadow:0 0 30px pink;
 display:none;
-animation:pop 1s ease forwards;
-}
-
-@keyframes pop{
-from{transform:scale(0);}
-to{transform:scale(1);}
 }
 
 .message{
 margin-top:20px;
 font-size:22px;
 display:none;
-animation:fadeIn 2s ease;
-}
-
-.bigHeart{
-font-size:80px;
-animation:beat 1s infinite;
-margin-top:20px;
-}
-
-@keyframes beat{
-0%{transform:scale(1);}
-50%{transform:scale(1.2);}
-100%{transform:scale(1);}
-}
-
-canvas{
-position:fixed;
-top:0;
-left:0;
-pointer-events:none;
 }
 
 </style>
@@ -127,15 +134,21 @@ pointer-events:none;
 
 <body>
 
+<div id="startScreen">💖 לחצי כאן להתחיל 💖</div>
+
+<canvas id="stars"></canvas>
 <canvas id="fireworks"></canvas>
 
-<div class="card">
+<div class="card" id="mainCard">
+
 <h1>קורל חיים שלי 💕<br>את פנויה ביום האהבה?</h1>
 
-<button id="yes" onclick="yes()">כן 😍</button>
+<div class="countdown" id="countdown"></div>
+
+<button id="yes">כן 😍</button>
 <button id="no">לא 🙄</button>
 
-<div class="bigHeart" id="heart" style="display:none;">💖</div>
+<div class="bigHeart" id="heart">💖</div>
 
 <img id="pic" src="image.JPG">
 
@@ -151,5 +164,95 @@ pointer-events:none;
 
 <script>
 
-const no=document.getElementById("no");
-const pic=document.getElementById("p
+/* מסך פתיחה */
+const startScreen=document.getElementById("startScreen");
+const card=document.getElementById("mainCard");
+const song=document.getElementById("song");
+
+startScreen.onclick=()=>{
+startScreen.style.opacity="0";
+setTimeout(()=>startScreen.style.display="none",1000);
+card.style.display="block";
+};
+
+/* ספירה לאחור */
+const countdown=document.getElementById("countdown");
+const target=new Date("Feb 14, 2026 00:00:00").getTime();
+
+setInterval(()=>{
+let now=new Date().getTime();
+let diff=target-now;
+
+let days=Math.floor(diff/(1000*60*60*24));
+let hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+
+countdown.innerHTML="עוד "+days+" ימים ו-"+hours+" שעות ליום האהבה שלנו 💘";
+},1000);
+
+/* כפתור כן */
+const yesBtn=document.getElementById("yes");
+const heart=document.getElementById("heart");
+const pic=document.getElementById("pic");
+const text=document.getElementById("text");
+
+yesBtn.onclick=()=>{
+song.play();
+heart.style.display="block";
+pic.style.display="block";
+text.style.display="block";
+document.body.style.transition="1s";
+document.body.style.background="linear-gradient(135deg,#ff4e8c,#ff9a9e)";
+launchFireworks();
+};
+
+/* כוכבים תלת מימד */
+const starCanvas=document.getElementById("stars");
+const sctx=starCanvas.getContext("2d");
+starCanvas.width=window.innerWidth;
+starCanvas.height=window.innerHeight;
+
+let stars=[];
+for(let i=0;i<150;i++){
+stars.push({
+x:Math.random()*starCanvas.width,
+y:Math.random()*starCanvas.height,
+r:Math.random()*2
+});
+}
+
+function animateStars(){
+sctx.clearRect(0,0,starCanvas.width,starCanvas.height);
+sctx.fillStyle="white";
+stars.forEach(s=>{
+sctx.beginPath();
+sctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+sctx.fill();
+s.y+=0.3;
+if(s.y>starCanvas.height) s.y=0;
+});
+requestAnimationFrame(animateStars);
+}
+animateStars();
+
+/* זיקוקים */
+const fireCanvas=document.getElementById("fireworks");
+const fctx=fireCanvas.getContext("2d");
+fireCanvas.width=window.innerWidth;
+fireCanvas.height=window.innerHeight;
+
+function launchFireworks(){
+for(let i=0;i<300;i++){
+setTimeout(()=>{
+fctx.fillStyle=`hsl(${Math.random()*360},100%,60%)`;
+fctx.beginPath();
+fctx.arc(Math.random()*fireCanvas.width,Math.random()*fireCanvas.height/2,4,0,Math.PI*2);
+fctx.fill();
+},i*8);
+}
+setTimeout(()=>fctx.clearRect(0,0,fireCanvas.width,fireCanvas.height),4000);
+}
+
+</script>
+
+</body>
+</html>
