@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>קורל 💖</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 
-/* ===== RESET & GLOBAL ===== */
+/* ==================== RESET & VARIABLES ==================== */
 *{
 margin:0;
 padding:0;
@@ -16,29 +16,31 @@ box-sizing:border-box;
 }
 
 :root{
---color-primary:#ff2e63;
---color-primary-dark:#d81e4f;
---color-secondary:#ff6b9d;
---color-accent:#ffafcc;
---color-bg-start:#0a0015;
---color-bg-end:#1a0520;
---color-white:rgba(255,255,255,0.95);
---color-glass:rgba(255,255,255,0.08);
---transition-smooth:cubic-bezier(0.4, 0, 0.2, 1);
---transition-bounce:cubic-bezier(0.68, -0.55, 0.265, 1.55);
+--primary:#ff2e63;
+--primary-dark:#d81e4f;
+--secondary:#ff6b9d;
+--accent:#ffafcc;
+--bg-night-start:#0a0015;
+--bg-night-end:#1a0520;
+--bg-day-start:#1a0520;
+--bg-day-end:#2d1b3d;
+--white:rgba(255,255,255,0.95);
+--glass:rgba(255,255,255,0.08);
+--transition:cubic-bezier(0.4, 0, 0.2, 1);
+--bounce:cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 body{
 font-family:'Heebo',sans-serif;
 min-height:100vh;
 overflow:hidden;
-background:linear-gradient(135deg, var(--color-bg-start), var(--color-bg-end));
-color:var(--color-white);
+background:linear-gradient(135deg, var(--bg-night-start), var(--bg-night-end));
+color:var(--white);
 position:relative;
-cursor:default;
+transition:background 3s ease;
 }
 
-/* ===== CANVAS LAYERS ===== */
+/* ==================== CANVAS ==================== */
 #mainCanvas{
 position:fixed;
 top:0;
@@ -49,7 +51,43 @@ z-index:1;
 pointer-events:none;
 }
 
-/* ===== INTRO SCENE ===== */
+/* ==================== FILM GRAIN OVERLAY ==================== */
+.grain-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background-image:url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noise)" opacity="0.05"/%3E%3C/svg%3E');
+opacity:0;
+pointer-events:none;
+z-index:100;
+transition:opacity 2s ease;
+}
+
+.grain-overlay.active{
+opacity:1;
+}
+
+/* ==================== VIGNETTE ==================== */
+.vignette{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.7) 100%);
+opacity:0;
+pointer-events:none;
+z-index:99;
+transition:opacity 2s ease;
+}
+
+.vignette.active{
+opacity:1;
+}
+
+/* ==================== SCENES ==================== */
 .scene{
 position:fixed;
 top:0;
@@ -63,7 +101,7 @@ flex-direction:column;
 z-index:10;
 opacity:0;
 pointer-events:none;
-transition:opacity 1.5s var(--transition-smooth);
+transition:opacity 1.5s var(--transition);
 }
 
 .scene.active{
@@ -71,6 +109,7 @@ opacity:1;
 pointer-events:auto;
 }
 
+/* ==================== INTRO SCENE ==================== */
 #introScene{
 background:radial-gradient(circle at center, rgba(255,46,99,0.15), transparent 70%);
 }
@@ -78,7 +117,7 @@ background:radial-gradient(circle at center, rgba(255,46,99,0.15), transparent 7
 .intro-content{
 text-align:center;
 transform:scale(0.9);
-transition:transform 2s var(--transition-smooth);
+transition:transform 2.5s var(--transition);
 }
 
 #introScene.active .intro-content{
@@ -86,58 +125,60 @@ transform:scale(1);
 }
 
 .intro-icon{
-font-size:clamp(60px, 12vw, 100px);
-margin-bottom:30px;
-animation:gentlePulse 3s ease-in-out infinite;
-filter:drop-shadow(0 0 30px var(--color-primary));
+font-size:clamp(70px, 14vw, 110px);
+margin-bottom:35px;
+animation:gentlePulse 3.5s ease-in-out infinite;
+filter:drop-shadow(0 0 35px var(--primary));
 }
 
 @keyframes gentlePulse{
 0%, 100%{transform:scale(1);}
-50%{transform:scale(1.08);}
+50%{transform:scale(1.06);}
 }
 
 .intro-text{
-font-size:clamp(18px, 3.5vw, 26px);
+font-size:clamp(20px, 4vw, 28px);
 font-weight:300;
-letter-spacing:3px;
+letter-spacing:4px;
 opacity:0.9;
-margin-bottom:40px;
+margin-bottom:50px;
 }
 
 .tap-hint{
-font-size:clamp(14px, 2.5vw, 18px);
+font-size:clamp(15px, 2.8vw, 19px);
 opacity:0.6;
-animation:fadeInOut 2s ease-in-out infinite;
-margin-top:20px;
+animation:fadeInOut 2.5s ease-in-out infinite;
+margin-top:25px;
+font-weight:300;
 }
 
 @keyframes fadeInOut{
-0%, 100%{opacity:0.4;}
-50%{opacity:0.8;}
+0%, 100%{opacity:0.35;}
+50%{opacity:0.85;}
 }
 
-/* ===== MAIN SCENE ===== */
+/* ==================== MAIN SCENE ==================== */
 #mainScene{
 padding:20px;
 }
 
 .card{
-backdrop-filter:blur(30px) saturate(180%);
-background:var(--color-glass);
-border:1px solid rgba(255,255,255,0.18);
-border-radius:30px;
-padding:clamp(30px, 6vw, 60px);
-max-width:600px;
-width:90%;
+backdrop-filter:blur(35px) saturate(180%);
+background:var(--glass);
+border:1px solid rgba(255,255,255,0.2);
+border-radius:35px;
+padding:clamp(35px, 7vw, 70px);
+max-width:650px;
+width:92%;
 box-shadow:
-0 8px 32px rgba(0,0,0,0.3),
-0 0 60px rgba(255,46,99,0.2),
-inset 0 0 40px rgba(255,255,255,0.05);
+0 12px 40px rgba(0,0,0,0.4),
+0 0 80px rgba(255,46,99,0.25),
+inset 0 0 50px rgba(255,255,255,0.06);
 text-align:center;
-transform:translateY(30px);
+transform:translateY(40px);
 opacity:0;
-transition:all 1.2s var(--transition-smooth);
+transition:all 1.5s var(--transition);
+position:relative;
 }
 
 #mainScene.active .card{
@@ -146,209 +187,304 @@ opacity:1;
 }
 
 .card-title{
-font-size:clamp(24px, 5vw, 36px);
+font-size:clamp(26px, 5.5vw, 40px);
 font-weight:800;
-line-height:1.5;
-margin-bottom:25px;
-background:linear-gradient(135deg, var(--color-white), var(--color-accent));
+line-height:1.6;
+margin-bottom:30px;
+background:linear-gradient(135deg, var(--white), var(--accent));
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 background-clip:text;
-text-shadow:0 2px 20px rgba(255,46,99,0.3);
+filter:drop-shadow(0 2px 25px rgba(255,46,99,0.35));
 }
 
 .countdown{
-font-size:clamp(14px, 2.8vw, 17px);
+font-size:clamp(15px, 3vw, 18px);
 font-weight:400;
-opacity:0.85;
-background:rgba(255,46,99,0.15);
-border:1px solid rgba(255,46,99,0.3);
-padding:18px 25px;
-border-radius:18px;
-margin-bottom:35px;
-line-height:1.6;
+opacity:0.88;
+background:rgba(255,46,99,0.18);
+border:1px solid rgba(255,46,99,0.35);
+padding:20px 28px;
+border-radius:20px;
+margin-bottom:40px;
+line-height:1.7;
 }
 
-/* ===== BUTTONS ===== */
+/* ==================== BUTTONS WITH MICRO-INTERACTIONS ==================== */
 .button-container{
 display:flex;
 flex-direction:column;
-gap:15px;
-margin:30px 0;
+gap:18px;
+margin:35px 0;
 align-items:center;
+position:relative;
+min-height:140px;
 }
 
 .btn{
 position:relative;
-padding:16px 50px;
-font-size:clamp(18px, 3.5vw, 22px);
+padding:18px 55px;
+font-size:clamp(19px, 3.8vw, 24px);
 font-weight:600;
 border:none;
 border-radius:50px;
 cursor:pointer;
-transition:all 0.3s var(--transition-smooth);
+transition:all 0.4s var(--transition);
 font-family:'Heebo',sans-serif;
-letter-spacing:0.5px;
+letter-spacing:0.8px;
 outline:none;
 -webkit-tap-highlight-color:transparent;
+overflow:hidden;
+z-index:1;
+}
+
+/* Ripple effect container */
+.btn::before{
+content:'';
+position:absolute;
+top:50%;
+left:50%;
+width:0;
+height:0;
+border-radius:50%;
+background:rgba(255,255,255,0.5);
+transform:translate(-50%, -50%);
+transition:width 0.6s, height 0.6s;
+}
+
+.btn.ripple::before{
+width:300px;
+height:300px;
+}
+
+/* Light sweep effect */
+.btn::after{
+content:'';
+position:absolute;
+top:0;
+left:-100%;
+width:100%;
+height:100%;
+background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+transition:left 0.7s;
+}
+
+.btn:hover::after{
+left:100%;
 }
 
 #yesBtn{
-background:linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+background:linear-gradient(135deg, var(--primary), var(--secondary));
 color:white;
 box-shadow:
-0 8px 25px rgba(255,46,99,0.4),
-inset 0 1px 0 rgba(255,255,255,0.3);
+0 10px 30px rgba(255,46,99,0.45),
+inset 0 1px 0 rgba(255,255,255,0.35);
 order:1;
 }
 
 #yesBtn:hover{
-transform:translateY(-4px) scale(1.03);
+transform:translateY(-5px) scale(1.04);
 box-shadow:
-0 12px 35px rgba(255,46,99,0.6),
-inset 0 1px 0 rgba(255,255,255,0.3);
+0 15px 45px rgba(255,46,99,0.65),
+inset 0 1px 0 rgba(255,255,255,0.35);
 }
 
 #yesBtn:active{
-transform:translateY(-2px) scale(1.01);
+transform:translateY(-3px) scale(1.02);
 }
 
 #noBtn{
-background:rgba(255,255,255,0.12);
-color:var(--color-white);
-border:1px solid rgba(255,255,255,0.3);
-box-shadow:0 4px 15px rgba(0,0,0,0.2);
-opacity:0.7;
+position:absolute;
+background:rgba(255,255,255,0.13);
+color:var(--white);
+border:1px solid rgba(255,255,255,0.35);
+box-shadow:0 6px 20px rgba(0,0,0,0.25);
+opacity:0.75;
+cursor:pointer;
+transition:all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 order:2;
-cursor:not-allowed;
 }
 
-#noBtn:hover{
-opacity:0.5;
-transform:scale(0.98);
+#noBtn.escaping{
+opacity:0.6;
+}
+
+#noBtn.defeated{
+transform:scale(0.85);
+opacity:0.4;
+filter:blur(1px);
+pointer-events:none;
 }
 
 .btn-hint{
-font-size:clamp(12px, 2.2vw, 14px);
-opacity:0.5;
-margin-top:5px;
+font-size:clamp(13px, 2.4vw, 15px);
+opacity:0.52;
+margin-top:8px;
 font-weight:300;
 }
 
-/* ===== SUCCESS SCENE ===== */
-#successScene{
-background:linear-gradient(135deg, rgba(255,46,99,0.3), rgba(255,107,157,0.2));
-}
-
-.success-content{
-text-align:center;
-max-width:600px;
-padding:20px;
-}
-
-.success-heart{
-font-size:clamp(80px, 15vw, 120px);
-margin-bottom:30px;
-animation:heartBeat 1.2s ease-in-out infinite;
-filter:drop-shadow(0 0 40px var(--color-primary));
-}
-
-@keyframes heartBeat{
-0%, 100%{transform:scale(1);}
-25%{transform:scale(1.15);}
-50%{transform:scale(1.05);}
-75%{transform:scale(1.2);}
-}
-
-.success-message{
-font-size:clamp(20px, 4vw, 28px);
-font-weight:600;
-line-height:1.8;
-margin-bottom:35px;
-opacity:0;
-animation:fadeInUp 1s var(--transition-smooth) 0.5s forwards;
-}
-
-@keyframes fadeInUp{
-from{opacity:0; transform:translateY(20px);}
-to{opacity:1; transform:translateY(0);}
-}
-
-.success-image{
-width:100%;
-max-width:350px;
-border-radius:25px;
-border:3px solid rgba(255,255,255,0.4);
-box-shadow:0 15px 50px rgba(0,0,0,0.4), 0 0 60px rgba(255,46,99,0.3);
-margin:0 auto;
-display:block;
-opacity:0;
-animation:fadeInUp 1s var(--transition-smooth) 1s forwards;
-}
-
-/* ===== LOVE QUOTES ===== */
-.love-quote{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%, -50%);
-font-size:clamp(22px, 4vw, 38px);
-font-weight:300;
-color:rgba(255,255,255,0.12);
-text-align:center;
-z-index:0;
-pointer-events:none;
-letter-spacing:2px;
-max-width:80vw;
-white-space:nowrap;
-opacity:0;
-transition:opacity 2s var(--transition-smooth);
-}
-
-.love-quote.visible{
-opacity:1;
-}
-
-/* ===== DIMMING OVERLAY ===== */
+/* ==================== DIM OVERLAY ==================== */
 .dim-overlay{
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.7);
+background:rgba(0,0,0,0.75);
 z-index:9;
 opacity:0;
 pointer-events:none;
-transition:opacity 1s var(--transition-smooth);
+transition:opacity 1.2s var(--transition);
 }
 
 .dim-overlay.active{
 opacity:1;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ==================== SUCCESS SCENE - CINEMATIC ==================== */
+#successScene{
+background:transparent;
+}
+
+.success-content{
+text-align:center;
+max-width:700px;
+padding:25px;
+position:relative;
+}
+
+/* Stage 1: Name reveal */
+.success-name{
+font-family:'Crimson Text', serif;
+font-size:clamp(50px, 12vw, 90px);
+font-weight:600;
+margin-bottom:40px;
+opacity:0;
+transform:scale(0.85);
+transition:all 2s var(--transition);
+background:linear-gradient(135deg, #fff, #ffafcc);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+filter:drop-shadow(0 0 50px rgba(255,46,99,0.7));
+letter-spacing:3px;
+}
+
+.success-name.visible{
+opacity:1;
+transform:scale(1);
+}
+
+/* Stage 2: Message typewriter */
+.success-message{
+font-size:clamp(22px, 4.5vw, 32px);
+font-weight:400;
+line-height:2;
+margin-bottom:50px;
+opacity:0;
+min-height:80px;
+font-family:'Heebo', sans-serif;
+}
+
+.success-message.visible{
+opacity:1;
+}
+
+/* Stage 3: Cinematic image reveal */
+.image-container{
+position:relative;
+display:inline-block;
+opacity:0;
+transform:scale(1.15);
+filter:blur(20px);
+transition:all 2.5s var(--transition);
+}
+
+.image-container.visible{
+opacity:1;
+transform:scale(1);
+filter:blur(0);
+}
+
+.image-frame{
+position:relative;
+padding:15px;
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(25px);
+border-radius:30px;
+border:2px solid rgba(255,255,255,0.25);
+box-shadow:
+0 25px 80px rgba(0,0,0,0.6),
+0 0 100px rgba(255,46,99,0.4),
+inset 0 0 60px rgba(255,255,255,0.08);
+}
+
+.success-image{
+width:100%;
+max-width:400px;
+border-radius:20px;
+display:block;
+box-shadow:0 15px 50px rgba(0,0,0,0.5);
+}
+
+/* Reflection effect under image */
+.image-reflection{
+position:absolute;
+bottom:-50px;
+left:50%;
+transform:translateX(-50%) scaleY(-1);
+width:90%;
+height:50px;
+background:linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+filter:blur(10px);
+opacity:0.4;
+border-radius:20px;
+pointer-events:none;
+}
+
+/* ==================== LOVE QUOTES BACKGROUND ==================== */
+.love-quote{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%, -50%);
+font-size:clamp(24px, 4.5vw, 42px);
+font-weight:300;
+color:rgba(255,255,255,0.12);
+text-align:center;
+z-index:0;
+pointer-events:none;
+letter-spacing:3px;
+max-width:85vw;
+white-space:nowrap;
+opacity:0;
+transition:opacity 2.5s var(--transition);
+}
+
+.love-quote.visible{
+opacity:1;
+}
+
+/* ==================== RESPONSIVE ==================== */
 @media (min-width:768px){
 .button-container{
 flex-direction:row;
 justify-content:center;
 }
-#yesBtn{order:1;}
-#noBtn{order:2;}
 }
 
-@media (max-height:700px){
-.card{padding:25px;}
-.card-title{margin-bottom:15px;}
-.countdown{margin-bottom:20px; padding:12px 20px;}
-.button-container{margin:20px 0; gap:12px;}
+@media (max-height:750px){
+.card{padding:30px;}
+.card-title{margin-bottom:20px;}
+.countdown{margin-bottom:25px; padding:15px 22px;}
+.button-container{margin:25px 0; gap:15px; min-height:100px;}
 }
 
 @media (max-width:400px){
-.btn{padding:14px 40px;}
+.btn{padding:16px 45px;}
 }
 
-/* ===== UTILITY ===== */
+/* ==================== UTILITY ==================== */
 .hidden{
 display:none !important;
 }
@@ -358,13 +494,19 @@ display:none !important;
 
 <body>
 
-<!-- Canvas for particles, stars, fireworks -->
+<!-- Canvas for particles -->
 <canvas id="mainCanvas"></canvas>
+
+<!-- Film grain overlay -->
+<div class="grain-overlay" id="grainOverlay"></div>
+
+<!-- Vignette overlay -->
+<div class="vignette" id="vignetteOverlay"></div>
 
 <!-- Background love quotes -->
 <div class="love-quote" id="loveQuote"></div>
 
-<!-- Dimming overlay for dramatic effect -->
+<!-- Dimming overlay -->
 <div class="dim-overlay" id="dimOverlay"></div>
 
 <!-- SCENE 1: Intro -->
@@ -381,7 +523,7 @@ display:none !important;
 <div class="card">
 <h1 class="card-title">קורל חיים שלי 💕<br>את פנויה ביום האהבה?</h1>
 <div class="countdown" id="countdown"></div>
-<div class="button-container">
+<div class="button-container" id="buttonContainer">
 <button class="btn" id="yesBtn">כן 😍</button>
 <button class="btn" id="noBtn">לא 🙄</button>
 </div>
@@ -389,12 +531,17 @@ display:none !important;
 </div>
 </div>
 
-<!-- SCENE 3: Success -->
+<!-- SCENE 3: Success - Cinematic -->
 <div class="scene" id="successScene">
 <div class="success-content">
-<div class="success-heart">💖</div>
+<div class="success-name" id="successName">קורל</div>
 <div class="success-message" id="successMessage"></div>
-<img class="success-image" id="successImage" src="image.JPG" alt="קורל ואני">
+<div class="image-container" id="imageContainer">
+<div class="image-frame">
+<img class="success-image" src="image.JPG" alt="קורל ואני">
+<div class="image-reflection"></div>
+</div>
+</div>
 </div>
 </div>
 
@@ -403,7 +550,7 @@ display:none !important;
 <script>
 
 // ============================================
-// CONFIGURATION & STATE
+// CONFIGURATION
 // ============================================
 
 const CONFIG = {
@@ -420,121 +567,190 @@ loveQuotes: [
 ],
 successMessage: "ידעתי שתגידי כן 😍\nביום האהבה אני רוצה להיות רק איתך 🥰\n(שבוע אחרי כי אני במילואים 😉)",
 particleColors: ['#ff2e63', '#ff6b9d', '#ffafcc', '#ffc2d1'],
-isMobile: window.innerWidth < 768
+isMobile: window.innerWidth < 768,
 };
+
+// ============================================
+// STATE MANAGEMENT
+// ============================================
 
 const STATE = {
 currentScene: 'intro',
 particleSystem: null,
 animationFrame: null,
 quoteIndex: 0,
-quoteInterval: null
+quoteInterval: null,
+noButtonEscapeCount: 0,
+mouseX: 0,
+mouseY: 0,
+isSlowMotion: false,
+timeOfDay: 'night' // will be calculated
 };
 
 // ============================================
 // DOM ELEMENTS
 // ============================================
 
-const elements = {
+const DOM = {
 canvas: document.getElementById('mainCanvas'),
 introScene: document.getElementById('introScene'),
 mainScene: document.getElementById('mainScene'),
 successScene: document.getElementById('successScene'),
 loveQuote: document.getElementById('loveQuote'),
 dimOverlay: document.getElementById('dimOverlay'),
+grainOverlay: document.getElementById('grainOverlay'),
+vignetteOverlay: document.getElementById('vignetteOverlay'),
 countdown: document.getElementById('countdown'),
 yesBtn: document.getElementById('yesBtn'),
 noBtn: document.getElementById('noBtn'),
+buttonContainer: document.getElementById('buttonContainer'),
+successName: document.getElementById('successName'),
 successMessage: document.getElementById('successMessage'),
-successImage: document.getElementById('successImage'),
+imageContainer: document.getElementById('imageContainer'),
 bgMusic: document.getElementById('bgMusic')
 };
 
-const ctx = elements.canvas.getContext('2d');
+const ctx = DOM.canvas.getContext('2d');
 
 // ============================================
-// PARTICLE SYSTEM
+// TIME OF DAY DETECTION
+// ============================================
+
+function detectTimeOfDay() {
+const hour = new Date().getHours();
+  
+if (hour >= 6 && hour < 18) {
+// Day time
+STATE.timeOfDay = 'day';
+document.documentElement.style.setProperty('--bg-night-start', '#1a0520');
+document.documentElement.style.setProperty('--bg-night-end', '#2d1b3d');
+return 'day';
+} else {
+// Night time
+STATE.timeOfDay = 'night';
+document.documentElement.style.setProperty('--bg-night-start', '#0a0015');
+document.documentElement.style.setProperty('--bg-night-end', '#1a0520');
+return 'night';
+}
+}
+
+// ============================================
+// PARTICLE SYSTEM WITH PARALLAX LAYERS
 // ============================================
 
 class Particle {
-constructor(x, y, type = 'star') {
+constructor(x, y, type = 'star', layer = 'mid') {
 this.x = x;
 this.y = y;
 this.type = type;
-this.size = Math.random() * 2 + 1;
-this.speedY = Math.random() * 0.5 + 0.2;
+this.layer = layer; // 'back', 'mid', 'front'
+    
+// Layer-based properties for parallax
+const layerConfig = {
+back: { size: 0.8, speed: 0.15, alpha: 0.3 },
+mid: { size: 1.2, speed: 0.4, alpha: 0.6 },
+front: { size: 2, speed: 0.7, alpha: 0.8 }
+};
+    
+const config = layerConfig[layer] || layerConfig.mid;
+    
+this.baseSize = (Math.random() * 1.5 + 0.5) * config.size;
+this.size = this.baseSize;
+this.baseSpeed = (Math.random() * 0.3 + 0.2) * config.speed;
+this.speedY = this.baseSpeed;
 this.speedX = 0;
-this.alpha = Math.random() * 0.5 + 0.5;
+this.baseAlpha = config.alpha;
+this.alpha = this.baseAlpha * (Math.random() * 0.4 + 0.6);
 this.color = 'white';
+this.parallaxOffsetX = 0;
+this.parallaxOffsetY = 0;
     
 if (type === 'firework') {
 const angle = Math.random() * Math.PI * 2;
-const speed = Math.random() * 4 + 2;
+const speed = Math.random() * 5 + 2;
 this.speedX = Math.cos(angle) * speed;
 this.speedY = Math.sin(angle) * speed;
-this.gravity = 0.08;
-this.friction = 0.98;
+this.gravity = 0.1;
+this.friction = 0.97;
 this.life = 1;
-this.decay = Math.random() * 0.015 + 0.01;
-this.size = Math.random() * 3 + 2;
+this.decay = Math.random() * 0.018 + 0.012;
+this.size = Math.random() * 3.5 + 2;
 this.color = CONFIG.particleColors[Math.floor(Math.random() * CONFIG.particleColors.length)];
 }
     
 if (type === 'heart') {
-this.speedX = (Math.random() - 0.5) * 2;
-this.speedY = Math.random() * -2 - 1;
-this.gravity = 0.05;
+this.speedX = (Math.random() - 0.5) * 2.5;
+this.speedY = Math.random() * -2.5 - 1;
+this.gravity = 0.06;
 this.life = 1;
-this.decay = 0.008;
-this.size = Math.random() * 15 + 10;
+this.decay = 0.009;
+this.size = Math.random() * 18 + 12;
 this.char = '💖';
+this.rotation = Math.random() * Math.PI * 2;
+this.rotationSpeed = (Math.random() - 0.5) * 0.05;
 }
 }
 
 update() {
+// Apply slow motion effect
+const speedMultiplier = STATE.isSlowMotion ? 0.3 : 1;
+    
 if (this.type === 'star') {
-this.y += this.speedY;
-if (this.y > elements.canvas.height) {
-this.y = 0;
-this.x = Math.random() * elements.canvas.width;
+// Apply parallax offset based on mouse position
+const parallaxStrength = this.layer === 'back' ? 0.02 : this.layer === 'mid' ? 0.05 : 0.1;
+this.parallaxOffsetX = (STATE.mouseX - DOM.canvas.width / 2) * parallaxStrength;
+this.parallaxOffsetY = (STATE.mouseY - DOM.canvas.height / 2) * parallaxStrength;
+      
+this.y += this.speedY * speedMultiplier;
+if (this.y > DOM.canvas.height) {
+this.y = -10;
+this.x = Math.random() * DOM.canvas.width;
 }
-this.alpha = Math.sin(Date.now() * 0.001 + this.x) * 0.3 + 0.6;
+      
+// Twinkling effect
+this.alpha = this.baseAlpha * (Math.sin(Date.now() * 0.001 + this.x * 0.01) * 0.3 + 0.7);
 }
     
 if (this.type === 'firework') {
-this.speedY += this.gravity;
+this.speedY += this.gravity * speedMultiplier;
 this.speedX *= this.friction;
 this.speedY *= this.friction;
-this.x += this.speedX;
-this.y += this.speedY;
-this.life -= this.decay;
+this.x += this.speedX * speedMultiplier;
+this.y += this.speedY * speedMultiplier;
+this.life -= this.decay * speedMultiplier;
 }
     
 if (this.type === 'heart') {
-this.speedY += this.gravity;
-this.x += this.speedX;
-this.y += this.speedY;
-this.life -= this.decay;
+this.speedY += this.gravity * speedMultiplier;
+this.x += this.speedX * speedMultiplier;
+this.y += this.speedY * speedMultiplier;
+this.life -= this.decay * speedMultiplier;
+this.rotation += this.rotationSpeed * speedMultiplier;
 }
 }
 
 draw(ctx) {
-if (this.life <= 0) return;
+if (this.life !== undefined && this.life <= 0) return;
     
 ctx.save();
 ctx.globalAlpha = this.type === 'star' ? this.alpha : this.life;
     
 if (this.type === 'heart') {
 ctx.font = `${this.size}px Arial`;
-ctx.fillText(this.char, this.x, this.y);
+ctx.translate(this.x, this.y);
+ctx.rotate(this.rotation);
+ctx.fillText(this.char, 0, 0);
 } else {
+const drawX = this.type === 'star' ? this.x + this.parallaxOffsetX : this.x;
+const drawY = this.type === 'star' ? this.y + this.parallaxOffsetY : this.y;
+      
 ctx.fillStyle = this.color;
 ctx.beginPath();
-ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+ctx.arc(drawX, drawY, this.size, 0, Math.PI * 2);
 ctx.fill();
       
 if (this.type === 'firework') {
-ctx.shadowBlur = 10;
+ctx.shadowBlur = 15;
 ctx.shadowColor = this.color;
 }
 }
@@ -543,45 +759,66 @@ ctx.restore();
 }
 
 isDead() {
-return this.life <= 0;
+return this.life !== undefined && this.life <= 0;
 }
 }
 
 class ParticleSystem {
 constructor() {
 this.particles = [];
+this.maxParticles = CONFIG.isMobile ? 200 : 400;
 this.init();
 }
 
 init() {
-// Create initial stars
-for (let i = 0; i < (CONFIG.isMobile ? 80 : 150); i++) {
+const layers = ['back', 'mid', 'front'];
+const particlesPerLayer = Math.floor(this.maxParticles / 3);
+    
+layers.forEach((layer, index) => {
+for (let i = 0; i < particlesPerLayer; i++) {
 this.particles.push(new Particle(
-Math.random() * elements.canvas.width,
-Math.random() * elements.canvas.height,
-'star'
+Math.random() * DOM.canvas.width,
+Math.random() * DOM.canvas.height,
+'star',
+layer
 ));
 }
+});
 }
 
 addFirework(x, y) {
-const count = CONFIG.isMobile ? 25 : 40;
+const count = CONFIG.isMobile ? 30 : 50;
 for (let i = 0; i < count; i++) {
+if (this.particles.length < this.maxParticles + 100) {
 this.particles.push(new Particle(x, y, 'firework'));
+}
 }
 }
 
 addHeart(x, y) {
+if (this.particles.length < this.maxParticles + 50) {
 this.particles.push(new Particle(x, y, 'heart'));
+}
 }
 
 update() {
 this.particles.forEach(p => p.update());
+    
+// Clean up dead particles but keep stars
 this.particles = this.particles.filter(p => !p.isDead() || p.type === 'star');
 }
 
 draw() {
-this.particles.forEach(p => p.draw(ctx));
+// Draw in layer order: back -> mid -> front
+['back', 'mid', 'front'].forEach(layer => {
+this.particles
+.filter(p => p.layer === layer || p.type !== 'star')
+.forEach(p => p.draw(ctx));
+});
+}
+
+setSlowMotion(enabled) {
+STATE.isSlowMotion = enabled;
 }
 }
 
@@ -590,12 +827,12 @@ this.particles.forEach(p => p.draw(ctx));
 // ============================================
 
 function resizeCanvas() {
-elements.canvas.width = window.innerWidth;
-elements.canvas.height = window.innerHeight;
+DOM.canvas.width = window.innerWidth;
+DOM.canvas.height = window.innerHeight;
 }
 
 function animate() {
-ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
+ctx.clearRect(0, 0, DOM.canvas.width, DOM.canvas.height);
   
 if (STATE.particleSystem) {
 STATE.particleSystem.update();
@@ -606,15 +843,40 @@ STATE.animationFrame = requestAnimationFrame(animate);
 }
 
 // ============================================
+// MOUSE TRACKING FOR PARALLAX
+// ============================================
+
+function trackMouse(e) {
+STATE.mouseX = e.clientX;
+STATE.mouseY = e.clientY;
+}
+
+function trackTouch(e) {
+if (e.touches.length > 0) {
+STATE.mouseX = e.touches[0].clientX;
+STATE.mouseY = e.touches[0].clientY;
+}
+}
+
+// ============================================
 // LOVE QUOTES MANAGER
 // ============================================
 
 function updateLoveQuote() {
-elements.loveQuote.classList.remove('visible');
+DOM.loveQuote.classList.remove('visible');
   
 setTimeout(() => {
-elements.loveQuote.textContent = CONFIG.loveQuotes[STATE.quoteIndex];
-elements.loveQuote.classList.add('visible');
+DOM*
+// ============================================
+// LOVE QUOTES MANAGER (CONTINUED)
+// ============================================
+
+function updateLoveQuote() {
+DOM.loveQuote.classList.remove('visible');
+
+setTimeout(() => {
+DOM.loveQuote.textContent = CONFIG.loveQuotes[STATE.quoteIndex];
+DOM.loveQuote.classList.add('visible');
 STATE.quoteIndex = (STATE.quoteIndex + 1) % CONFIG.loveQuotes.length;
 }, 2000);
 }
@@ -629,7 +891,7 @@ if (STATE.quoteInterval) {
 clearInterval(STATE.quoteInterval);
 STATE.quoteInterval = null;
 }
-elements.loveQuote.classList.remove('visible');
+DOM.loveQuote.classList.remove('visible');
 }
 
 // ============================================
@@ -637,37 +899,96 @@ elements.loveQuote.classList.remove('visible');
 // ============================================
 
 function updateCountdown() {
-const now = new Date().getTime();
+const now = Date.now();
 const diff = CONFIG.targetDate - now;
-  
+
+if (diff <= 0) {
+DOM.countdown.innerHTML = "היום זה היום שלנו 💘";
+return;
+}
+
 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  
-elements.countdown.innerHTML = `עוד ${days} ימים, ${hours} שעות ו-${minutes} דקות<br>ליום האהבה שלנו 💘`;
+const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+DOM.countdown.innerHTML =
+`עוד ${days} ימים, ${hours} שעות ו-${minutes} דקות<br>ליום האהבה שלנו 💕`;
 }
 
 // ============================================
 // TYPEWRITER EFFECT
 // ============================================
 
-function typeWriter(element, text, speed = 50) {
-return new Promise((resolve) => {
-let index = 0;
+function typeWriter(element, text, speed = 45) {
+return new Promise(resolve => {
+let i = 0;
 element.textContent = '';
-    
-function type() {
-if (index < text.length) {
-element.textContent += text.charAt(index);
-index++;
-setTimeout(type, speed);
+element.classList.add('visible');
+
+function typing() {
+if (i < text.length) {
+element.textContent += text.charAt(i);
+i++;
+setTimeout(typing, speed);
 } else {
 resolve();
 }
 }
-    
-type();
+typing();
 });
+}
+
+// ============================================
+// NO BUTTON ESCAPE SYSTEM
+// ============================================
+
+function moveNoButton() {
+if (STATE.noButtonEscapeCount >= 5) {
+DOM.noBtn.classList.add('defeated');
+return;
+}
+
+STATE.noButtonEscapeCount++;
+
+const containerRect = DOM.buttonContainer.getBoundingClientRect();
+const btnRect = DOM.noBtn.getBoundingClientRect();
+
+const maxX = containerRect.width - btnRect.width;
+const maxY = containerRect.height - btnRect.height;
+
+const randomX = Math.random() * maxX - (containerRect.width / 4);
+const randomY = Math.random() * maxY - (containerRect.height / 4);
+
+DOM.noBtn.classList.add('escaping');
+DOM.noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+
+setTimeout(() => {
+DOM.noBtn.classList.remove('escaping');
+}, 300);
+}
+
+function handleNoProximity(e) {
+if (STATE.noButtonEscapeCount >= 5) return;
+
+const rect = DOM.noBtn.getBoundingClientRect();
+const distance = Math.hypot(
+e.clientX - (rect.left + rect.width / 2),
+e.clientY - (rect.top + rect.height / 2)
+);
+
+if (distance < 120) {
+moveNoButton();
+}
+}
+
+// ============================================
+// RIPPLE EFFECT
+// ============================================
+
+function addRippleEffect(e) {
+const button = e.currentTarget;
+button.classList.add('ripple');
+setTimeout(() => button.classList.remove('ripple'), 600);
 }
 
 // ============================================
@@ -675,22 +996,17 @@ type();
 // ============================================
 
 function switchScene(from, to, callback) {
-const fromElement = elements[from + 'Scene'];
-const toElement = elements[to + 'Scene'];
-  
-// Fade out current scene
-fromElement.classList.remove('active');
-  
+DOM[from + 'Scene'].classList.remove('active');
+
 setTimeout(() => {
-fromElement.classList.add('hidden');
-toElement.classList.remove('hidden');
-    
-// Small delay before fading in
+DOM[from + 'Scene'].classList.add('hidden');
+DOM[to + 'Scene'].classList.remove('hidden');
+
 setTimeout(() => {
-toElement.classList.add('active');
+DOM[to + 'Scene'].classList.add('active');
 STATE.currentScene = to;
 if (callback) callback();
-}, 100);
+}, 200);
 }, 1500);
 }
 
@@ -698,116 +1014,108 @@ if (callback) callback();
 // FIREWORKS SHOW
 // ============================================
 
-function launchFireworksShow() {
-const launchCount = CONFIG.isMobile ? 15 : 30;
+function launchFireworks(count = 25) {
 let launched = 0;
-  
+
 const interval = setInterval(() => {
-if (launched >= launchCount) {
+if (launched >= count) {
 clearInterval(interval);
 return;
 }
-    
-const x = Math.random() * elements.canvas.width;
-const y = Math.random() * (elements.canvas.height * 0.6);
-    
+
+const x = Math.random() * DOM.canvas.width;
+const y = Math.random() * (DOM.canvas.height * 0.6);
+
 STATE.particleSystem.addFirework(x, y);
 launched++;
-}, 200);
+}, 180);
 }
 
 // ============================================
-// HEART PARTICLE SHOWER
+// HEART SHOWER
 // ============================================
 
-function createHeartShower() {
+function heartShower() {
 let count = 0;
-const maxCount = CONFIG.isMobile ? 15 : 25;
-  
+const max = CONFIG.isMobile ? 20 : 35;
+
 const interval = setInterval(() => {
-if (count >= maxCount) {
+if (count >= max) {
 clearInterval(interval);
 return;
 }
-    
-const x = Math.random() * elements.canvas.width;
-const y = elements.canvas.height + 50;
-    
-STATE.particleSystem.addHeart(x, y);
+STATE.particleSystem.addHeart(
+Math.random() * DOM.canvas.width,
+DOM.canvas.height + 40
+);
 count++;
 }, 150);
 }
 
 // ============================================
-// EVENT HANDLERS
+// YES BUTTON - CINEMATIC FLOW
+// ============================================
+
+async function handleYesClick() {
+
+DOM.yesBtn.disabled = true;
+addRippleEffect({ currentTarget: DOM.yesBtn });
+
+// Dramatic slow motion
+STATE.particleSystem.setSlowMotion(true);
+DOM.dimOverlay.classList.add('active');
+
+// Peak pause
+await new Promise(r => setTimeout(r, 1300));
+
+STATE.particleSystem.setSlowMotion(false);
+launchFireworks(35);
+
+setTimeout(() => {
+switchScene('main', 'success', async () => {
+
+// Activate cinematic overlays
+DOM.grainOverlay.classList.add('active');
+DOM.vignetteOverlay.classList.add('active');
+
+// Stage 1: Name reveal
+setTimeout(() => {
+DOM.successName.classList.add('visible');
+}, 800);
+
+// Stage 2: Message
+setTimeout(async () => {
+await typeWriter(DOM.successMessage, CONFIG.successMessage, 40);
+}, 2000);
+
+// Stage 3: Image reveal
+setTimeout(() => {
+DOM.imageContainer.classList.add('visible');
+heartShower();
+launchFireworks(20);
+}, 4000);
+
+});
+}, 1800);
+
+DOM.bgMusic.play().catch(() => {});
+stopLoveQuotes();
+}
+
+// ============================================
+// INTRO CLICK
 // ============================================
 
 function handleIntroClick() {
-// Dim the background slightly
-elements.dimOverlay.classList.add('active');
-  
+DOM.dimOverlay.classList.add('active');
+
 setTimeout(() => {
-elements.dimOverlay.classList.remove('active');
+DOM.dimOverlay.classList.remove('active');
 switchScene('intro', 'main', () => {
 updateCountdown();
-setInterval(updateCountdown, 60000); // Update every minute
+setInterval(updateCountdown, 60000);
 });
 }, 1000);
-}
-
-function handleYesClick() {
-// Play music
-elements.bgMusic.play().catch(e => console.log('Audio requires user interaction'));
-  
-// Disable button
-elements.yesBtn.disabled = true;
-elements.yesBtn.textContent = 'אני אוהב אותך! 💖';
-elements.yesBtn.style.background = 'linear-gradient(135deg, #ff0080, #ff6b9d)';
-  
-// Hide "no" button
-elements.noBtn.style.opacity = '0';
-setTimeout(() => elements.noBtn.style.display = 'none', 300);
-  
-// Stop love quotes
-stopLoveQuotes();
-  
-// Launch fireworks
-launchFireworksShow();
-  
-// Dramatic dim
-elements.dimOverlay.classList.add('active');
-  
-// Transition to success scene
-setTimeout(() => {
-elements.dimOverlay.classList.remove('active');
-switchScene('main', 'success', async () => {
-// Change background gradient
-document.body.style.transition = 'background 2s ease';
-document.body.style.background = 'linear-gradient(135deg, #ff4e8c, #ff9a9e)';
-      
-// Typewriter effect for message
-await typeWriter(elements.successMessage, CONFIG.successMessage, 40);
-      
-// Show image
-setTimeout(() => {
-elements.successImage.style.opacity = '1';
-}, 500);
-      
-// Create heart shower
-createHeartShower();
-      
-// More fireworks
-setTimeout(launchFireworksShow, 2000);
-});
-}, 2000);
-}
-
-function handleNoHover() {
-// Subtle hint that it's not clickable
-elements.noBtn.style.transform = 'scale(0.95)';
-setTimeout(() => {
-elements.noBtn.style.transform = 'scale(1)';
-}, 200);
 }
 
 // ============================================
@@ -815,47 +1123,36 @@ elements.noBtn.style.transform = 'scale(1)';
 // ============================================
 
 function init() {
-// Setup canvas
+
+detectTimeOfDay();
+
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
-  
-// Create particle system
+
 STATE.particleSystem = new ParticleSystem();
-  
-// Start animation loop
 animate();
-  
-// Start love quotes
+
 startLoveQuotes();
-  
-// Event listeners
-elements.introScene.addEventListener('click', handleIntroClick);
-elements.yesBtn.addEventListener('click', handleYesClick);
-elements.noBtn.addEventListener('mouseenter', handleNoHover);
-elements.noBtn.addEventListener('click', (e) => e.preventDefault());
-  
-// Prevent context menu on long press (mobile)
-document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+DOM.introScene.addEventListener('click', handleIntroClick);
+DOM.yesBtn.addEventListener('click', handleYesClick);
+DOM.yesBtn.addEventListener('click', addRippleEffect);
+DOM.noBtn.addEventListener('mouseenter', moveNoButton);
+document.addEventListener('mousemove', handleNoProximity);
+
+document.addEventListener('mousemove', trackMouse);
+document.addEventListener('touchmove', trackTouch);
+
+document.addEventListener('contextmenu', e => e.preventDefault());
 }
 
-// Start when DOM is ready
 if (document.readyState === 'loading') {
 document.addEventListener('DOMContentLoaded', init);
 } else {
 init();
 }
 
-// Cleanup on page unload
 window.addEventListener('beforeunload', () => {
-if (STATE.animationFrame) {
-cancelAnimationFrame(STATE.animationFrame);
-}
-if (STATE.quoteInterval) {
-clearInterval(STATE.quoteInterval);
-}
+if (STATE.animationFrame) cancelAnimationFrame(STATE.animationFrame);
+if (STATE.quoteInterval) clearInterval(STATE.quoteInterval);
 });
-
-</script>
-
-</body>
-</html>
