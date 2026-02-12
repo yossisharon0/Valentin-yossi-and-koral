@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>קורל 💖</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
@@ -177,7 +176,6 @@ flex-direction:column;
 gap:15px;
 margin:30px 0;
 align-items:center;
-position:relative; /* חשוב בשביל הכפתור "לא" */
 }
 
 .btn{
@@ -277,8 +275,8 @@ to{opacity:1; transform:translateY(0);}
 }
 
 .success-image{
-width:80%;           /* קטנה יותר */
-max-width:300px;     /* קטנה יותר */
+width:100%;
+max-width:350px;
 border-radius:25px;
 border:3px solid rgba(255,255,255,0.4);
 box-shadow:0 15px 50px rgba(0,0,0,0.4), 0 0 60px rgba(255,46,99,0.3);
@@ -360,10 +358,16 @@ display:none !important;
 
 <body>
 
+<!-- Canvas for particles, stars, fireworks -->
 <canvas id="mainCanvas"></canvas>
+
+<!-- Background love quotes -->
 <div class="love-quote" id="loveQuote"></div>
+
+<!-- Dimming overlay for dramatic effect -->
 <div class="dim-overlay" id="dimOverlay"></div>
 
+<!-- SCENE 1: Intro -->
 <div class="scene active" id="introScene">
 <div class="intro-content">
 <div class="intro-icon">💖</div>
@@ -372,6 +376,7 @@ display:none !important;
 </div>
 </div>
 
+<!-- SCENE 2: Main Question -->
 <div class="scene" id="mainScene">
 <div class="card">
 <h1 class="card-title">קורל חיים שלי 💕<br>את פנויה ביום האהבה?</h1>
@@ -384,6 +389,7 @@ display:none !important;
 </div>
 </div>
 
+<!-- SCENE 3: Success -->
 <div class="scene" id="successScene">
 <div class="success-content">
 <div class="success-heart">💖</div>
@@ -395,6 +401,10 @@ display:none !important;
 <audio id="bgMusic" src="song.mp3" preload="auto"></audio>
 
 <script>
+
+// ============================================
+// CONFIGURATION & STATE
+// ============================================
 
 const CONFIG = {
 targetDate: new Date("Feb 14, 2026 00:00:00").getTime(),
@@ -421,6 +431,10 @@ quoteIndex: 0,
 quoteInterval: null
 };
 
+// ============================================
+// DOM ELEMENTS
+// ============================================
+
 const elements = {
 canvas: document.getElementById('mainCanvas'),
 introScene: document.getElementById('introScene'),
@@ -438,5 +452,410 @@ bgMusic: document.getElementById('bgMusic')
 
 const ctx = elements.canvas.getContext('2d');
 
-/* ... כאן נשאר כל הקוד הקיים של Particle וכו' ... */
-/* בשביל הקיצור לא מחזר על כל מערכת החלקיקים */
+// ============================================
+// PARTICLE SYSTEM
+// ============================================
+
+class Particle {
+constructor(x, y, type = 'star') {
+this.x = x;
+this.y = y;
+this.type = type;
+this.size = Math.random() * 2 + 1;
+this.speedY = Math.random() * 0.5 + 0.2;
+this.speedX = 0;
+this.alpha = Math.random() * 0.5 + 0.5;
+this.color = 'white';
+    
+if (type === 'firework') {
+const angle = Math.random() * Math.PI * 2;
+const speed = Math.random() * 4 + 2;
+this.speedX = Math.cos(angle) * speed;
+this.speedY = Math.sin(angle) * speed;
+this.gravity = 0.08;
+this.friction = 0.98;
+this.life = 1;
+this.decay = Math.random() * 0.015 + 0.01;
+this.size = Math.random() * 3 + 2;
+this.color = CONFIG.particleColors[Math.floor(Math.random() * CONFIG.particleColors.length)];
+}
+    
+if (type === 'heart') {
+this.speedX = (Math.random() - 0.5) * 2;
+this.speedY = Math.random() * -2 - 1;
+this.gravity = 0.05;
+this.life = 1;
+this.decay = 0.008;
+this.size = Math.random() * 15 + 10;
+this.char = '💖';
+}
+}
+
+update() {
+if (this.type === 'star') {
+this.y += this.speedY;
+if (this.y > elements.canvas.height) {
+this.y = 0;
+this.x = Math.random() * elements.canvas.width;
+}
+this.alpha = Math.sin(Date.now() * 0.001 + this.x) * 0.3 + 0.6;
+}
+    
+if (this.type === 'firework') {
+this.speedY += this.gravity;
+this.speedX *= this.friction;
+this.speedY *= this.friction;
+this.x += this.speedX;
+this.y += this.speedY;
+this.life -= this.decay;
+}
+    
+if (this.type === 'heart') {
+this.speedY += this.gravity;
+this.x += this.speedX;
+this.y += this.speedY;
+this.life -= this.decay;
+}
+}
+
+draw(ctx) {
+if (this.life <= 0) return;
+    
+ctx.save();
+ctx.globalAlpha = this.type === 'star' ? this.alpha : this.life;
+    
+if (this.type === 'heart') {
+ctx.font = `${this.size}px Arial`;
+ctx.fillText(this.char, this.x, this.y);
+} else {
+ctx.fillStyle = this.color;
+ctx.beginPath();
+ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+ctx.fill();
+      
+if (this.type === 'firework') {
+ctx.shadowBlur = 10;
+ctx.shadowColor = this.color;
+}
+}
+    
+ctx.restore();
+}
+
+isDead() {
+return this.life <= 0;
+}
+}
+
+class ParticleSystem {
+constructor() {
+this.particles = [];
+this.init();
+}
+
+init() {
+// Create initial stars
+for (let i = 0; i < (CONFIG.isMobile ? 80 : 150); i++) {
+this.particles.push(new Particle(
+Math.random() * elements.canvas.width,
+Math.random() * elements.canvas.height,
+'star'
+));
+}
+}
+
+addFirework(x, y) {
+const count = CONFIG.isMobile ? 25 : 40;
+for (let i = 0; i < count; i++) {
+this.particles.push(new Particle(x, y, 'firework'));
+}
+}
+
+addHeart(x, y) {
+this.particles.push(new Particle(x, y, 'heart'));
+}
+
+update() {
+this.particles.forEach(p => p.update());
+this.particles = this.particles.filter(p => !p.isDead() || p.type === 'star');
+}
+
+draw() {
+this.particles.forEach(p => p.draw(ctx));
+}
+}
+
+// ============================================
+// CANVAS MANAGEMENT
+// ============================================
+
+function resizeCanvas() {
+elements.canvas.width = window.innerWidth;
+elements.canvas.height = window.innerHeight;
+}
+
+function animate() {
+ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
+  
+if (STATE.particleSystem) {
+STATE.particleSystem.update();
+STATE.particleSystem.draw();
+}
+  
+STATE.animationFrame = requestAnimationFrame(animate);
+}
+
+// ============================================
+// LOVE QUOTES MANAGER
+// ============================================
+
+function updateLoveQuote() {
+elements.loveQuote.classList.remove('visible');
+  
+setTimeout(() => {
+elements.loveQuote.textContent = CONFIG.loveQuotes[STATE.quoteIndex];
+elements.loveQuote.classList.add('visible');
+STATE.quoteIndex = (STATE.quoteIndex + 1) % CONFIG.loveQuotes.length;
+}, 2000);
+}
+
+function startLoveQuotes() {
+updateLoveQuote();
+STATE.quoteInterval = setInterval(updateLoveQuote, 8000);
+}
+
+function stopLoveQuotes() {
+if (STATE.quoteInterval) {
+clearInterval(STATE.quoteInterval);
+STATE.quoteInterval = null;
+}
+elements.loveQuote.classList.remove('visible');
+}
+
+// ============================================
+// COUNTDOWN TIMER
+// ============================================
+
+function updateCountdown() {
+const now = new Date().getTime();
+const diff = CONFIG.targetDate - now;
+  
+const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  
+elements.countdown.innerHTML = `עוד ${days} ימים, ${hours} שעות ו-${minutes} דקות<br>ליום האהבה שלנו 💘`;
+}
+
+// ============================================
+// TYPEWRITER EFFECT
+// ============================================
+
+function typeWriter(element, text, speed = 50) {
+return new Promise((resolve) => {
+let index = 0;
+element.textContent = '';
+    
+function type() {
+if (index < text.length) {
+element.textContent += text.charAt(index);
+index++;
+setTimeout(type, speed);
+} else {
+resolve();
+}
+}
+    
+type();
+});
+}
+
+// ============================================
+// SCENE TRANSITIONS
+// ============================================
+
+function switchScene(from, to, callback) {
+const fromElement = elements[from + 'Scene'];
+const toElement = elements[to + 'Scene'];
+  
+// Fade out current scene
+fromElement.classList.remove('active');
+  
+setTimeout(() => {
+fromElement.classList.add('hidden');
+toElement.classList.remove('hidden');
+    
+// Small delay before fading in
+setTimeout(() => {
+toElement.classList.add('active');
+STATE.currentScene = to;
+if (callback) callback();
+}, 100);
+}, 1500);
+}
+
+// ============================================
+// FIREWORKS SHOW
+// ============================================
+
+function launchFireworksShow() {
+const launchCount = CONFIG.isMobile ? 15 : 30;
+let launched = 0;
+  
+const interval = setInterval(() => {
+if (launched >= launchCount) {
+clearInterval(interval);
+return;
+}
+    
+const x = Math.random() * elements.canvas.width;
+const y = Math.random() * (elements.canvas.height * 0.6);
+    
+STATE.particleSystem.addFirework(x, y);
+launched++;
+}, 200);
+}
+
+// ============================================
+// HEART PARTICLE SHOWER
+// ============================================
+
+function createHeartShower() {
+let count = 0;
+const maxCount = CONFIG.isMobile ? 15 : 25;
+  
+const interval = setInterval(() => {
+if (count >= maxCount) {
+clearInterval(interval);
+return;
+}
+    
+const x = Math.random() * elements.canvas.width;
+const y = elements.canvas.height + 50;
+    
+STATE.particleSystem.addHeart(x, y);
+count++;
+}, 150);
+}
+
+// ============================================
+// EVENT HANDLERS
+// ============================================
+
+function handleIntroClick() {
+// Dim the background slightly
+elements.dimOverlay.classList.add('active');
+  
+setTimeout(() => {
+elements.dimOverlay.classList.remove('active');
+switchScene('intro', 'main', () => {
+updateCountdown();
+setInterval(updateCountdown, 60000); // Update every minute
+});
+}, 1000);
+}
+
+function handleYesClick() {
+// Play music
+elements.bgMusic.play().catch(e => console.log('Audio requires user interaction'));
+  
+// Disable button
+elements.yesBtn.disabled = true;
+elements.yesBtn.textContent = 'אני אוהב אותך! 💖';
+elements.yesBtn.style.background = 'linear-gradient(135deg, #ff0080, #ff6b9d)';
+  
+// Hide "no" button
+elements.noBtn.style.opacity = '0';
+setTimeout(() => elements.noBtn.style.display = 'none', 300);
+  
+// Stop love quotes
+stopLoveQuotes();
+  
+// Launch fireworks
+launchFireworksShow();
+  
+// Dramatic dim
+elements.dimOverlay.classList.add('active');
+  
+// Transition to success scene
+setTimeout(() => {
+elements.dimOverlay.classList.remove('active');
+switchScene('main', 'success', async () => {
+// Change background gradient
+document.body.style.transition = 'background 2s ease';
+document.body.style.background = 'linear-gradient(135deg, #ff4e8c, #ff9a9e)';
+      
+// Typewriter effect for message
+await typeWriter(elements.successMessage, CONFIG.successMessage, 40);
+      
+// Show image
+setTimeout(() => {
+elements.successImage.style.opacity = '1';
+}, 500);
+      
+// Create heart shower
+createHeartShower();
+      
+// More fireworks
+setTimeout(launchFireworksShow, 2000);
+});
+}, 2000);
+}
+
+function handleNoHover() {
+// Subtle hint that it's not clickable
+elements.noBtn.style.transform = 'scale(0.95)';
+setTimeout(() => {
+elements.noBtn.style.transform = 'scale(1)';
+}, 200);
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+function init() {
+// Setup canvas
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+  
+// Create particle system
+STATE.particleSystem = new ParticleSystem();
+  
+// Start animation loop
+animate();
+  
+// Start love quotes
+startLoveQuotes();
+  
+// Event listeners
+elements.introScene.addEventListener('click', handleIntroClick);
+elements.yesBtn.addEventListener('click', handleYesClick);
+elements.noBtn.addEventListener('mouseenter', handleNoHover);
+elements.noBtn.addEventListener('click', (e) => e.preventDefault());
+  
+// Prevent context menu on long press (mobile)
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+}
+
+// Start when DOM is ready
+if (document.readyState === 'loading') {
+document.addEventListener('DOMContentLoaded', init);
+} else {
+init();
+}
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+if (STATE.animationFrame) {
+cancelAnimationFrame(STATE.animationFrame);
+}
+if (STATE.quoteInterval) {
+clearInterval(STATE.quoteInterval);
+}
+});
+
+</script>
+
+</body>
+</html>
